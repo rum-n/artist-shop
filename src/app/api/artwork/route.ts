@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
       let description;
       try {
         description = JSON.parse(artwork.description);
-      } catch (error) {
+      } catch {
         description = { en: artwork.description, bg: "" };
       }
 
