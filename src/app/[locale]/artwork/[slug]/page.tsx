@@ -12,6 +12,7 @@ import ImageGallery from '@/components/ImageGallery';
 export default function ArtworkDetail() {
   const params = useParams();
   const slug = params.slug as string;
+  const locale = params.locale as string;
 
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [selectedImage, setSelectedImage] = useState<number>(0);
@@ -147,7 +148,9 @@ export default function ArtworkDetail() {
 
             <div className="prose max-w-none mb-8">
               <h3 className="text-xl font-semibold mb-2">Description</h3>
-              <p className="whitespace-pre-line">{artwork.description}</p>
+              <p className="whitespace-pre-line">
+                {artwork.description[locale] || artwork.description['en']}
+              </p>
             </div>
 
             <div className="mb-8">
