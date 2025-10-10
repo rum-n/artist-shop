@@ -116,17 +116,17 @@ export default function NewArtwork() {
 
       Object.entries(formData).forEach(([key, value]) => {
         if (key === "description") {
-          Object.entries(value).forEach(([lang, desc]) => {
-            formDataToSend.append(`description[${lang}]`, desc as string);
-          });
-        } else {
+          formDataToSend.append(key, JSON.stringify(value));
+        } else if (key !== "images") {
           formDataToSend.append(key, value.toString());
         }
       });
 
-      formData.images.forEach((image, index) => {
-        formDataToSend.append(`image-${index}`, image.url);
-      });
+      for (const image of formData.images) {
+        const response = await fetch(image.url);
+        const blob = await response.blob();
+        formDataToSend.append(`image-${image.url}`, blob);
+      }
 
       const response = await fetch("/api/artwork", {
         method: "POST",

@@ -46,7 +46,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -56,6 +56,7 @@ export async function PUT(
     }
 
     const body = await request.json();
+    const artworkId = (await params).slug;
 
     // Validate required fields
     if (!body.title || !body.slug || !body.price || !body.medium || !body.year) {
@@ -67,7 +68,7 @@ export async function PUT(
 
     // Check if artwork exists
     const existingArtwork = await db.artwork.findUnique({
-      where: { id: (await params).id },
+      where: { id: artworkId },
     });
 
     if (!existingArtwork) {
@@ -79,7 +80,7 @@ export async function PUT(
       const slugExists = await db.artwork.findFirst({
         where: {
           slug: body.slug,
-          id: { not: (await params).id },
+          id: { not: artworkId },
         },
       });
 
@@ -93,7 +94,7 @@ export async function PUT(
 
     // Update artwork
     const updatedArtwork = await db.artwork.update({
-      where: { id: (await params).id },
+      where: { id: artworkId },
       data: {
         title: body.title,
         slug: body.slug,
@@ -120,7 +121,7 @@ export async function PUT(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -129,9 +130,11 @@ export async function DELETE(
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
+    const artworkId = (await params).slug;
+
     // Check if artwork exists
     const existingArtwork = await db.artwork.findUnique({
-      where: { id: (await params).id },
+      where: { id: artworkId },
     });
 
     if (!existingArtwork) {
@@ -143,7 +146,7 @@ export async function DELETE(
       where: {
         items: {
           some: {
-            artworkId: (await params).id,
+            artworkId: artworkId,
           },
         },
       },
@@ -158,7 +161,7 @@ export async function DELETE(
 
     // Delete artwork
     await db.artwork.delete({
-      where: { id: (await params).id },
+      where: { id: artworkId },
     });
 
     return NextResponse.json({ message: 'Artwork deleted successfully' });

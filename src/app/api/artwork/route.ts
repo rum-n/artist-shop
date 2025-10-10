@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     // Extract text fields
     const title = formData.get("title") as string;
     const slug = formData.get("slug") as string;
-    const description = formData.get("description") as string;
+    const description = JSON.parse(formData.get("description") as string);
     const price = parseFloat(formData.get("price") as string);
     const medium = formData.get("medium") as string;
     const year = parseInt(formData.get("year") as string);
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       data: {
         title,
         slug,
-        description,
+        description: JSON.stringify(description),
         price,
         medium,
         year,
@@ -117,31 +117,41 @@ export async function GET(request: NextRequest) {
     });
 
     // Process artworks to ensure image URLs are absolute
-    const processedArtworks: Artwork[] = artworks.map((artwork) => ({
-      ...artwork,
-      dimensions:
-        typeof artwork.dimensions === "object" && artwork.dimensions !== null
-          ? {
-              width: String((artwork.dimensions as Dimensions).width || ""),
-              height: String((artwork.dimensions as Dimensions).height || ""),
-              unit: String((artwork.dimensions as Dimensions).unit || ""),
+    const processedArtworks: Artwork[] = artworks.map((artwork) => {
+      let description;
+      try {
+        description = JSON.parse(artwork.description);
+      } catch (error) {
+        description = { en: artwork.description, bg: "" };
+      }
+
+      return {
+        ...artwork,
+        description,
+        dimensions:
+          typeof artwork.dimensions === "object" && artwork.dimensions !== null
+            ? {
+                width: String((artwork.dimensions as Dimensions).width || ""),
+                height: String((artwork.dimensions as Dimensions).height || ""),
+                unit: String((artwork.dimensions as Dimensions).unit || ""),
+              }
+            : { width: "", height: "", unit: "" },
+        images:
+          artwork.images?.map((image) => {
+            if (typeof image === "object" && image !== null && "url" in image) {
+              return {
+                url: (image.url as string).startsWith("http")
+                  ? (image.url as string)
+                  : `https://res.cloudinary.com/${
+                      process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+                    }/${image.url as string}`,
+                alt: (image as { alt?: string }).alt || artwork.title,
+              };
             }
-          : { width: "", height: "", unit: "" },
-      images:
-        artwork.images?.map((image) => {
-          if (typeof image === "object" && image !== null && "url" in image) {
-            return {
-              url: (image.url as string).startsWith("http")
-                ? (image.url as string)
-                : `https://res.cloudinary.com/${
-                    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-                  }/${image.url as string}`,
-              alt: (image as { alt?: string }).alt || artwork.title,
-            };
-          }
-          return { url: "", alt: artwork.title };
-        }) || [],
-    }));
+            return { url: "", alt: artwork.title };
+          }) || [],
+      };
+    });
 
     return NextResponse.json({ artworks: processedArtworks });
   } catch (error) {

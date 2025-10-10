@@ -6,7 +6,7 @@ export interface Artwork {
   medium: string;
   year: number;
   images?: { url: string; alt: string }[];
-  description: string;
+  description: { [key: string]: string };
   dimensions: {
     width: string;
     height: string;
