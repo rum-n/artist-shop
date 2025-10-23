@@ -110,9 +110,21 @@ export async function GET(request: NextRequest) {
     // Get query parameters
     const { searchParams } = new URL(request.url);
     const featured = searchParams.get("featured") === "true";
+    const inStock = searchParams.get("inStock");
+
+    // Build where clause based on query parameters
+    const where: { featured?: boolean; inStock?: boolean } = {};
+    if (featured) {
+      where.featured = true;
+    }
+    if (inStock === "true") {
+      where.inStock = true;
+    } else if (inStock === "false") {
+      where.inStock = false;
+    }
 
     const artworks = await db.artwork.findMany({
-      where: featured ? { featured: true } : undefined,
+      where: Object.keys(where).length > 0 ? where : undefined,
       orderBy: { createdAt: "desc" },
     });
 

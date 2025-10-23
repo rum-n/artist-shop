@@ -19,8 +19,10 @@ export default function Shop() {
     const fetchArtworks = async () => {
       setIsLoading(true);
       try {
-        // Fetch only available artworks
-        const response = await fetch("/api/artwork?featured=true&inStock=true");
+        // Fetch only available artworks (inStock=true)
+        const response = await fetch(
+          `${window.location.origin}/api/artwork?inStock=true`
+        );
         const data = await response.json();
 
         if (data.artworks) {

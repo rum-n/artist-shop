@@ -33,8 +33,8 @@ export default function Gallery() {
     const fetchArtworks = async () => {
       setIsLoading(true);
       try {
-        // Fetch from API endpoint
-        const response = await fetch("/api/artwork?featured=true&inStock=true");
+        // Fetch all artworks from API endpoint (no filters)
+        const response = await fetch(`${window.location.origin}/api/artwork`);
         const data = await response.json();
 
         if (data.artworks) {
