@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent } from 'react';
 import { toast } from 'react-hot-toast';
 import ImageUploader from '@/components/ImageUploader';
 import Image from 'next/image';
+import { Series } from '@/types/Artwork';
 
 interface ArtworkFormData {
   id: string;
@@ -19,6 +20,7 @@ interface ArtworkFormData {
   };
   inStock: boolean;
   featured: boolean;
+  seriesId?: string | null;
   images: { url: string; alt?: string }[];
 }
 
@@ -42,11 +44,20 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
     dimensions: { width: 0, height: 0 },
     inStock: true,
     featured: false,
+    seriesId: '',
     images: [],
   });
 
+  const [seriesList, setSeriesList] = useState<Series[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/series')
+      .then((res) => res.json())
+      .then((data) => setSeriesList(data.series || []))
+      .catch((err) => console.error('Error loading series:', err));
+  }, []);
 
   useEffect(() => {
     console.log('UseEffect running with ID:', artworkId);
@@ -334,6 +345,26 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                       />
                     </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="seriesId" className="block text-sm font-medium text-gray-700">
+                      Series
+                    </label>
+                    <select
+                      id="seriesId"
+                      name="seriesId"
+                      value={formData.seriesId ?? ''}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                    >
+                      <option value="">— No series —</option>
+                      {seriesList.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="flex space-x-4">

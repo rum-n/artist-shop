@@ -27,7 +27,7 @@ export default function AdminNavbar() {
           <div className="hidden md:flex items-center space-x-4">
             <Link
               href="/admin"
-              className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/admin') && !isActive('/admin/artworks') && !isActive('/admin/orders') && !isActive('/admin/settings')
+              className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/admin') && !isActive('/admin/artworks') && !isActive('/admin/series') && !isActive('/admin/orders') && !isActive('/admin/settings')
                   ? 'bg-gray-900 text-white'
                   : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                 }`}
@@ -42,6 +42,15 @@ export default function AdminNavbar() {
                 }`}
             >
               Artworks
+            </Link>
+            <Link
+              href="/admin/series"
+              className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/admin/series')
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                }`}
+            >
+              Series
             </Link>
             <Link
               href="/admin/orders"
@@ -110,7 +119,7 @@ export default function AdminNavbar() {
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link
             href="/admin"
-            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/admin') && !isActive('/admin/artworks') && !isActive('/admin/orders') && !isActive('/admin/settings')
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/admin') && !isActive('/admin/artworks') && !isActive('/admin/series') && !isActive('/admin/orders') && !isActive('/admin/settings')
                 ? 'bg-gray-900 text-white'
                 : 'text-gray-300 hover:bg-gray-700 hover:text-white'
               }`}
@@ -125,6 +134,15 @@ export default function AdminNavbar() {
               }`}
           >
             Artworks
+          </Link>
+          <Link
+            href="/admin/series"
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/admin/series')
+                ? 'bg-gray-900 text-white'
+                : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              }`}
+          >
+            Series
           </Link>
           <Link
             href="/admin/orders"

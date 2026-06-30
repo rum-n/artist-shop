@@ -36,6 +36,8 @@ export async function POST(request: NextRequest) {
     const unit = formData.get("unit") as string;
     const inStock = formData.get("inStock") === "true";
     const featured = formData.get("featured") === "true";
+    const seriesIdValue = formData.get("seriesId") as string | null;
+    const seriesId = seriesIdValue ? seriesIdValue : null;
 
     // Validate required fields
     if (
@@ -100,6 +102,7 @@ export async function POST(request: NextRequest) {
         images: imageUrls,
         inStock,
         featured,
+        seriesId,
       },
     });
 

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import AdminNavbar from "@/components/AdminNavbar";
 import Image from "next/image";
 import ImageUploader from "@/components/ImageUploader";
 import { toast } from "react-hot-toast";
-import { ArtworkFormData } from "@/types/Artwork";
+import { ArtworkFormData, Series } from "@/types/Artwork";
 
 export default function NewArtwork() {
   const { status } = useSession();
@@ -29,11 +29,20 @@ export default function NewArtwork() {
     unit: "in",
     inStock: true,
     featured: false,
+    seriesId: "",
     images: [],
   });
 
+  const [seriesList, setSeriesList] = useState<Series[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch("/api/series")
+      .then((res) => res.json())
+      .then((data) => setSeriesList(data.series || []))
+      .catch((err) => console.error("Error loading series:", err));
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -319,6 +328,29 @@ export default function NewArtwork() {
                   <option value="cm">centimeters</option>
                 </select>
               </div>
+            </div>
+
+            <div className="md:col-span-2">
+              <label htmlFor="seriesId" className="block text-gray-700 mb-2">
+                Series
+              </label>
+              <select
+                id="seriesId"
+                name="seriesId"
+                value={formData.seriesId ?? ""}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">— No series —</option>
+                {seriesList.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-sm text-gray-500 mt-1">
+                Group this artwork with others in the gallery.
+              </p>
             </div>
 
             <div className="md:col-span-2">

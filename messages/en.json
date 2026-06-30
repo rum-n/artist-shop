@@ -12,6 +12,7 @@
   "GalleryPage": {
     "title": "Art Gallery",
     "description": "Explore the complete collection of original artworks.",
+    "otherWorks": "Other works",
     "filters": {
       "all": "All artworks",
       "available": "Available",

@@ -116,6 +116,7 @@ export async function PUT(
         inStock: body.inStock,
         featured: body.featured,
         images: body.images,
+        seriesId: body.seriesId ? body.seriesId : null,
       },
     });
 

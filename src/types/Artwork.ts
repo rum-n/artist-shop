@@ -14,6 +14,7 @@ export interface Artwork {
   };
   inStock: boolean;
   featured: boolean;
+  seriesId?: string | null;
   createdAt: Date;
 }
 
@@ -29,5 +30,14 @@ export interface ArtworkFormData {
   unit: string;
   inStock: boolean;
   featured: boolean;
+  seriesId?: string | null;
   images: { url: string; alt: string }[];
+}
+
+export interface Series {
+  id: string;
+  name: string;
+  slug: string;
+  description: { [key: string]: string };
+  order: number;
 }

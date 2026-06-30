@@ -31,6 +31,17 @@ export default async function AdminDashboard() {
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <h2 className="text-xl mb-4">Series</h2>
+            <p className="text-gray-600 mb-4">Group artworks into series shown together in the gallery.</p>
+            <Link
+              href="/admin/series"
+              className="inline-block bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700"
+            >
+              Manage Series
+            </Link>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
             <h2 className="text-xl mb-4">Orders</h2>
             <p className="text-gray-600 mb-4">View and manage customer orders.</p>
             <Link
