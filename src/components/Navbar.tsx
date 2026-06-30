@@ -29,7 +29,7 @@ export default function Navbar({ currentPath }: NavbarProps) {
           <div className="flex-shrink-0">
             <Link
               href="/"
-              className="text-xl font-bold text-gray-800 uppercase"
+              className="text-3xl font-bold text-gray-800 font-[family-name:var(--font-caveat)]"
             >
               Violetta Boyadzhieva
             </Link>
