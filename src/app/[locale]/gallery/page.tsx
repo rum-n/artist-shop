@@ -26,7 +26,6 @@ interface ArtworkWithImages {
 export default function Gallery() {
   const [artworks, setArtworks] = useState<ArtworkWithImages[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState("all");
   const t = useTranslations("GalleryPage");
 
   useEffect(() => {
@@ -50,13 +49,6 @@ export default function Gallery() {
     fetchArtworks();
   }, []);
 
-  const filteredArtworks = artworks.filter((artwork) => {
-    if (filter === "all") return true;
-    if (filter === "available") return artwork.inStock;
-    if (filter === "sold") return !artwork.inStock;
-    return true;
-  });
-
   return (
     <>
       <Navbar currentPath="/gallery" />
@@ -66,45 +58,6 @@ export default function Gallery() {
           <p className="text-xl text-gray-600 mb-8 text-center">
             {t("description")}
           </p>
-
-          {/* Filter Controls */}
-          <div className="flex justify-center mb-8">
-            <div className="inline-flex rounded-md shadow-sm" role="group">
-              <button
-                type="button"
-                onClick={() => setFilter("all")}
-                className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
-                  filter === "all"
-                    ? "bg-primary-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                } border border-gray-200`}
-              >
-                {t("filters.all")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setFilter("available")}
-                className={`px-4 py-2 text-sm font-medium ${
-                  filter === "available"
-                    ? "bg-primary-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                } border-t border-b border-r border-gray-200`}
-              >
-                {t("filters.available")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setFilter("sold")}
-                className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
-                  filter === "sold"
-                    ? "bg-primary-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                } border-t border-b border-r border-gray-200`}
-              >
-                {t("filters.sold")}
-              </button>
-            </div>
-          </div>
         </section>
 
         {isLoading ? (
@@ -114,7 +67,7 @@ export default function Gallery() {
         ) : (
           <section className="artwork-grid">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredArtworks.map((artwork) => (
+              {artworks.map((artwork) => (
                 <div
                   key={artwork.id}
                   className="artwork-card border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
@@ -134,17 +87,12 @@ export default function Gallery() {
                         </span>
                       </div>
                     )}
-                    {artwork.inStock === false && (
-                      <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-bold">
-                        SOLD
-                      </div>
-                    )}
                   </div>
                 </div>
               ))}
             </div>
 
-            {filteredArtworks.length === 0 && (
+            {artworks.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-xl text-gray-600">
                   No artworks found matching your criteria.
