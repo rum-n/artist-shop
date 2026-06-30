@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { uploadImage } from "@/lib/uploadImage";
+import { isValidImageUrl } from "@/lib/imageUrl";
 import { Artwork } from "@/types/Artwork";
 
 type Dimensions = {
@@ -60,7 +61,14 @@ export async function POST(request: NextRequest) {
     for (const [key, value] of formData.entries()) {
       if (key.startsWith("image-") && value instanceof Blob) {
         const imageUrl = await uploadImage(value);
-        // Store the image URL without any locale prefix
+        // Guard against an upload that didn't return a real URL, so we never
+        // persist a broken image reference.
+        if (!isValidImageUrl(imageUrl)) {
+          return NextResponse.json(
+            { message: "Image upload failed" },
+            { status: 502 }
+          );
+        }
         imageUrls.push({
           url: imageUrl,
           alt: title, // Default alt text
@@ -148,20 +156,27 @@ export async function GET(request: NextRequest) {
                 unit: String((artwork.dimensions as Dimensions).unit || ""),
               }
             : { width: "", height: "", unit: "" },
+        // Only surface images backed by a real uploaded URL. Anything else
+        // (legacy junk paths, missing urls) is dropped so the UI never tries
+        // to render a broken image.
         images:
-          artwork.images?.map((image) => {
-            if (typeof image === "object" && image !== null && "url" in image) {
-              return {
-                url: (image.url as string).startsWith("http")
-                  ? (image.url as string)
-                  : `https://res.cloudinary.com/${
-                      process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-                    }/${image.url as string}`,
-                alt: (image as { alt?: string }).alt || artwork.title,
-              };
-            }
-            return { url: "", alt: artwork.title };
-          }) || [],
+          artwork.images
+            ?.map((image) => {
+              if (
+                typeof image === "object" &&
+                image !== null &&
+                isValidImageUrl((image as { url?: unknown }).url)
+              ) {
+                return {
+                  url: (image as { url: string }).url,
+                  alt: (image as { alt?: string }).alt || artwork.title,
+                };
+              }
+              return null;
+            })
+            .filter((image): image is { url: string; alt: string } =>
+              image !== null
+            ) || [],
       };
     });
 

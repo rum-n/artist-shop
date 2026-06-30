@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
+import { areImagesValid } from '@/lib/imageUrl';
 
 export async function GET(
   request: Request,
@@ -62,6 +63,15 @@ export async function PUT(
     if (!body.title || !body.slug || !body.price || !body.medium || !body.year) {
       return NextResponse.json(
         { message: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // Reject any image that isn't a real uploaded URL so broken references
+    // (e.g. legacy "[object File]" paths) can never be persisted.
+    if (body.images !== undefined && !areImagesValid(body.images)) {
+      return NextResponse.json(
+        { message: 'One or more images have an invalid URL' },
         { status: 400 }
       );
     }
