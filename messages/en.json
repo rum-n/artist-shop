@@ -53,5 +53,11 @@
     "text": "Buy now",
     "processing": "Processing...",
     "soldOut": "Sold out"
+  },
+  "Footer": {
+    "newsletterTitle": "Join my newsletter",
+    "newsletterText": "Stories from the studio, new work, and exhibitions — straight to your inbox.",
+    "newsletterButton": "Subscribe on Substack",
+    "rights": "All rights reserved."
   }
 }
