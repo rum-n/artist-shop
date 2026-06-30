@@ -67,7 +67,7 @@ export default function About() {
           <div className="container mx-auto py-12">
             {isLoading ? (
               <div className="flex justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
               </div>
             ) : aboutContent ? (
               <div className="prose prose-lg max-w-none">
@@ -118,7 +118,7 @@ export default function About() {
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
                 href="/gallery"
-                className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
+                className="bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 transition"
               >
                 Галерия
               </Link>

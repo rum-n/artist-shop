@@ -78,7 +78,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
               <Link
                 href="/gallery"
-                className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
+                className="bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 transition"
               >
                 {t("buttons.gallery")}
               </Link>
@@ -123,7 +123,7 @@ export default function Home() {
                     <p className="text-lg font-bold mt-2">${artwork.price}</p>
                     <Link
                       href={`/artwork/${artwork.slug}`}
-                      className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                      className="mt-4 inline-block bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 transition"
                     >
                       {t("featuredArtworkCard.button")}
                     </Link>
@@ -132,7 +132,7 @@ export default function Home() {
               ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/gallery" className="text-blue-600 hover:underline">
+            <Link href="/gallery" className="text-primary-600 hover:underline">
               View All Artworks
             </Link>
           </div>

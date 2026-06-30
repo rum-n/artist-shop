@@ -57,7 +57,7 @@ export default function BuyButton({
       className={`w-full py-3 px-6 rounded-md cursor-pointer ${
         !inStock
           ? "bg-gray-400 cursor-not-allowed"
-          : "bg-blue-600 hover:bg-blue-700"
+          : "bg-primary-600 hover:bg-primary-700"
       } text-white font-medium`}
     >
       {isLoading ? t("processing") : inStock ? t("text") : t("soldOut")}

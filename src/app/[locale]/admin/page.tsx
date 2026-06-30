@@ -24,7 +24,7 @@ export default async function AdminDashboard() {
             <p className="text-gray-600 mb-4">Add, edit, or remove artworks from your portfolio.</p>
             <Link
               href="/admin/artworks"
-              className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="inline-block bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700"
             >
               Manage Artworks
             </Link>
@@ -35,7 +35,7 @@ export default async function AdminDashboard() {
             <p className="text-gray-600 mb-4">View and manage customer orders.</p>
             <Link
               href="/admin/orders"
-              className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="inline-block bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700"
             >
               View Orders
             </Link>
@@ -46,7 +46,7 @@ export default async function AdminDashboard() {
             <p className="text-gray-600 mb-4">Update homepage hero image and other site settings.</p>
             <Link
               href="/admin/settings"
-              className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="inline-block bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700"
             >
               Site Settings
             </Link>

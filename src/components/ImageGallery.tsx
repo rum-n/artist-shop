@@ -63,7 +63,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`relative w-20 h-20 flex-shrink-0 rounded-md overflow-hidden ${index === currentIndex ? 'ring-2 ring-blue-500' : 'opacity-70'
+              className={`relative w-20 h-20 flex-shrink-0 rounded-md overflow-hidden ${index === currentIndex ? 'ring-2 ring-primary-500' : 'opacity-70'
                 }`}
             >
               <Image

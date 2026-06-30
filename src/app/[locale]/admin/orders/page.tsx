@@ -47,7 +47,7 @@ export default function AdminOrders() {
 
         {loading ? (
           <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
           </div>
         ) : (
           <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -107,7 +107,7 @@ export default function AdminOrders() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => setSelectedOrderId(order.id)}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-primary-600 hover:text-primary-900"
                       >
                         View Details
                       </button>

@@ -79,7 +79,7 @@ export default function ManageArtworks() {
         <AdminNavbar />
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
           </div>
         </div>
       </>
@@ -102,7 +102,7 @@ export default function ManageArtworks() {
 
         {isLoading ? (
           <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
           </div>
         ) : (
           <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -173,7 +173,7 @@ export default function ManageArtworks() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${artwork.featured
-                          ? 'bg-blue-100 text-blue-800'
+                          ? 'bg-primary-100 text-primary-800'
                           : 'bg-gray-100 text-gray-800'
                           }`}>
                           {artwork.featured ? 'Featured' : 'Not Featured'}
@@ -182,7 +182,7 @@ export default function ManageArtworks() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button
                           onClick={() => setEditArtworkId(artwork.id)}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
+                          className="text-primary-600 hover:text-primary-900 mr-4"
                         >
                           Edit
                         </button>

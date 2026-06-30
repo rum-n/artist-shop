@@ -184,7 +184,7 @@ export default function SiteSettings() {
                   />
                 ) : (
                   <div className="flex justify-center items-center h-[400px] bg-gray-50">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
                   </div>
                 )}
               </div>
@@ -192,7 +192,7 @@ export default function SiteSettings() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 mt-4"
+              className="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 disabled:bg-gray-400 mt-4"
             >
               {isSubmitting ? 'Saving...' : 'Update Homepage Content'}
             </button>
@@ -229,7 +229,7 @@ export default function SiteSettings() {
             <button
               type="submit"
               disabled={!heroImage || isSubmitting}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+              className="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 disabled:bg-gray-400"
             >
               {isSubmitting ? 'Uploading...' : 'Update Hero Image'}
             </button>
@@ -249,7 +249,7 @@ export default function SiteSettings() {
                   />
                 ) : (
                   <div className="flex justify-center items-center h-[400px] bg-gray-50">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
                   </div>
                 )}
               </div>
@@ -257,7 +257,7 @@ export default function SiteSettings() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 mt-4"
+              className="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 disabled:bg-gray-400 mt-4"
             >
               {isSubmitting ? 'Saving...' : 'Update About Me Content'}
             </button>

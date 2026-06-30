@@ -94,7 +94,7 @@ export default function Shop() {
                       id="sort"
                       value={sortOption}
                       onChange={handleSortChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-7 px-1"
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm h-7 px-1"
                     >
                       <option value="newest">{t("newest")}</option>
                       <option value="oldest">{t("oldest")}</option>
@@ -114,7 +114,7 @@ export default function Shop() {
                     onClick={() => handlePriceRangeChange(0, 10000)}
                     className={`px-3 py-1 text-sm rounded-full ${
                       priceRange[0] === 0 && priceRange[1] === 10000
-                        ? "bg-blue-600 text-white"
+                        ? "bg-primary-600 text-white"
                         : "bg-white text-gray-700 border border-gray-300"
                     }`}
                   >
@@ -124,7 +124,7 @@ export default function Shop() {
                     onClick={() => handlePriceRangeChange(0, 500)}
                     className={`px-3 py-1 text-sm rounded-full ${
                       priceRange[0] === 0 && priceRange[1] === 500
-                        ? "bg-blue-600 text-white"
+                        ? "bg-primary-600 text-white"
                         : "bg-white text-gray-700 border border-gray-300"
                     }`}
                   >
@@ -134,7 +134,7 @@ export default function Shop() {
                     onClick={() => handlePriceRangeChange(500, 1000)}
                     className={`px-3 py-1 text-sm rounded-full ${
                       priceRange[0] === 500 && priceRange[1] === 1000
-                        ? "bg-blue-600 text-white"
+                        ? "bg-primary-600 text-white"
                         : "bg-white text-gray-700 border border-gray-300"
                     }`}
                   >
@@ -144,7 +144,7 @@ export default function Shop() {
                     onClick={() => handlePriceRangeChange(1000, 10000)}
                     className={`px-3 py-1 text-sm rounded-full ${
                       priceRange[0] === 1000 && priceRange[1] === 10000
-                        ? "bg-blue-600 text-white"
+                        ? "bg-primary-600 text-white"
                         : "bg-white text-gray-700 border border-gray-300"
                     }`}
                   >
@@ -158,7 +158,7 @@ export default function Shop() {
 
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
           </div>
         ) : (
           <section className="artwork-grid">
@@ -224,7 +224,7 @@ export default function Shop() {
                     setSortOption("newest");
                     setPriceRange([0, 10000]);
                   }}
-                  className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                  className="mt-4 bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 transition"
                 >
                   {t("removeFilters")}
                 </button>

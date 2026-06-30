@@ -214,7 +214,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
         <div className="p-6">
           {isFetching ? (
             <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -231,7 +231,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                       value={formData.title}
                       onChange={handleChange}
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     />
                   </div>
 
@@ -246,7 +246,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                       value={formData.slug}
                       onChange={handleChange}
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     />
                     <p className="text-sm text-gray-500 mt-1">
                       URL-friendly version of the title
@@ -266,7 +266,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                       min="0"
                       step="0.01"
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     />
                   </div>
 
@@ -281,7 +281,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                       value={formData.medium}
                       onChange={handleChange}
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     />
                   </div>
 
@@ -298,7 +298,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                       min="1900"
                       max={new Date().getFullYear()}
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     />
                   </div>
 
@@ -315,7 +315,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                         onChange={handleChange}
                         min="0"
                         step="0.1"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                       />
                     </div>
 
@@ -331,7 +331,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                         onChange={handleChange}
                         min="0"
                         step="0.1"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                       />
                     </div>
                   </div>
@@ -344,7 +344,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                         name="inStock"
                         checked={formData.inStock}
                         onChange={handleChange}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                       />
                       <label htmlFor="inStock" className="ml-2 block text-sm text-gray-700">
                         Available for purchase
@@ -358,7 +358,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                         name="featured"
                         checked={formData.featured}
                         onChange={handleChange}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                       />
                       <label htmlFor="featured" className="ml-2 block text-sm text-gray-700">
                         Featured on homepage
@@ -378,7 +378,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                       value={formData.description}
                       onChange={handleChange}
                       rows={6}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     />
                   </div>
 
@@ -402,7 +402,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                                 <button
                                   type="button"
                                   onClick={() => reorderImages(index, index - 1)}
-                                  className="text-white hover:text-blue-300"
+                                  className="text-white hover:text-primary-300"
                                   aria-label="Move left"
                                 >
                                   ←
@@ -422,7 +422,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                                 <button
                                   type="button"
                                   onClick={() => reorderImages(index, index + 1)}
-                                  className="text-white hover:text-blue-300"
+                                  className="text-white hover:text-primary-300"
                                   aria-label="Move right"
                                 >
                                   →
@@ -460,7 +460,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:bg-primary-300 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Saving...' : 'Save Changes'}
                 </button>

@@ -344,7 +344,7 @@ export default function NewArtwork() {
                           <button
                             type="button"
                             onClick={() => reorderImages(index, index - 1)}
-                            className="text-white hover:text-blue-300"
+                            className="text-white hover:text-primary-300"
                             aria-label="Move left"
                           >
                             ←
@@ -364,7 +364,7 @@ export default function NewArtwork() {
                           <button
                             type="button"
                             onClick={() => reorderImages(index, index + 1)}
-                            className="text-white hover:text-blue-300"
+                            className="text-white hover:text-primary-300"
                             aria-label="Move right"
                           >
                             →
@@ -396,7 +396,7 @@ export default function NewArtwork() {
                 name="inStock"
                 checked={formData.inStock}
                 onChange={handleChange}
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                className="h-4 w-4 text-primary-600 border-gray-300 rounded"
               />
               <label htmlFor="inStock" className="ml-2 block text-gray-700">
                 Available for purchase
@@ -410,7 +410,7 @@ export default function NewArtwork() {
                 name="featured"
                 checked={formData.featured}
                 onChange={handleChange}
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                className="h-4 w-4 text-primary-600 border-gray-300 rounded"
               />
               <label htmlFor="featured" className="ml-2 block text-gray-700">
                 Feature on homepage
@@ -429,7 +429,7 @@ export default function NewArtwork() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+              className="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 disabled:opacity-50"
             >
               {isSubmitting ? "Saving..." : "Save Artwork"}
             </button>

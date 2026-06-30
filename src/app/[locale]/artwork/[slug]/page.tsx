@@ -49,7 +49,7 @@ export default function ArtworkDetail() {
       <>
         <Navbar currentPath={`/artwork/${slug}`} />
         <div className="container mx-auto px-4 py-16 flex justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
         </div>
       </>
     );
@@ -72,7 +72,7 @@ export default function ArtworkDetail() {
       <Navbar currentPath={`/artwork/${slug}`} />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <Link href="/shop" className="text-blue-600 hover:underline flex items-center">
+          <Link href="/shop" className="text-primary-600 hover:underline flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
             </svg>
@@ -104,7 +104,7 @@ export default function ArtworkDetail() {
                 </div>
               )}
               {artwork.featured && (
-                <div className="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-md text-sm font-bold">
+                <div className="absolute top-4 left-4 bg-primary-500 text-white px-3 py-1 rounded-md text-sm font-bold">
                   FEATURED
                 </div>
               )}
@@ -117,7 +117,7 @@ export default function ArtworkDetail() {
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`relative w-20 h-20 flex-shrink-0 rounded-md overflow-hidden ${selectedImage === index ? 'ring-2 ring-blue-500' : 'opacity-70'
+                    className={`relative w-20 h-20 flex-shrink-0 rounded-md overflow-hidden ${selectedImage === index ? 'ring-2 ring-primary-500' : 'opacity-70'
                       }`}
                   >
                     <Image

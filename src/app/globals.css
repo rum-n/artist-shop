@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+/*
+ * Brand palette: a soft, artistic dusty-rose / mauve used as the primary
+ * accent across buttons, links and focus states.
+ */
+@theme {
+  --color-primary-50: #fbf4f7;
+  --color-primary-100: #f6e6ee;
+  --color-primary-200: #efcfdd;
+  --color-primary-300: #e1a9c2;
+  --color-primary-400: #cd7ba0;
+  --color-primary-500: #bd6790;
+  --color-primary-600: #a44f76;
+  --color-primary-700: #883f60;
+  --color-primary-800: #713551;
+  --color-primary-900: #5f2e45;
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
 }

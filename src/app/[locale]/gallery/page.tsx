@@ -75,7 +75,7 @@ export default function Gallery() {
                 onClick={() => setFilter("all")}
                 className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
                   filter === "all"
-                    ? "bg-blue-600 text-white"
+                    ? "bg-primary-600 text-white"
                     : "bg-white text-gray-700 hover:bg-gray-100"
                 } border border-gray-200`}
               >
@@ -86,7 +86,7 @@ export default function Gallery() {
                 onClick={() => setFilter("available")}
                 className={`px-4 py-2 text-sm font-medium ${
                   filter === "available"
-                    ? "bg-blue-600 text-white"
+                    ? "bg-primary-600 text-white"
                     : "bg-white text-gray-700 hover:bg-gray-100"
                 } border-t border-b border-r border-gray-200`}
               >
@@ -97,7 +97,7 @@ export default function Gallery() {
                 onClick={() => setFilter("sold")}
                 className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
                   filter === "sold"
-                    ? "bg-blue-600 text-white"
+                    ? "bg-primary-600 text-white"
                     : "bg-white text-gray-700 hover:bg-gray-100"
                 } border-t border-b border-r border-gray-200`}
               >
@@ -109,7 +109,7 @@ export default function Gallery() {
 
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
           </div>
         ) : (
           <section className="artwork-grid">

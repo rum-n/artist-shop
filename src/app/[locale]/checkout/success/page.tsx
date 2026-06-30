@@ -35,7 +35,7 @@ function SuccessContent() {
 
       {loading ? (
         <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
         </div>
       ) : (
         orderDetails && (
@@ -48,7 +48,7 @@ function SuccessContent() {
       <div className="mt-8">
         <Link
           href="/gallery"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md"
+          className="bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-6 rounded-md"
         >
           Continue Shopping
         </Link>
@@ -65,7 +65,7 @@ export default function CheckoutSuccess() {
         <h1 className="text-3xl font-bold mb-4">Thank You for Your Purchase!</h1>
         <p className="text-xl mb-8">Loading your order details...</p>
         <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
         </div>
       </div>
     }>
