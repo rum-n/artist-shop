@@ -18,7 +18,7 @@ export default function Footer() {
     <footer className="bg-primary-900 text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col items-center text-center gap-4 max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold">{t("newsletterTitle")}</h2>
+          <h2 className="text-2xl">{t("newsletterTitle")}</h2>
           <p className="text-primary-100">{t("newsletterText")}</p>
           <a
             href={SUBSTACK_URL}

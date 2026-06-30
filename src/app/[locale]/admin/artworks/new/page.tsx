@@ -151,7 +151,7 @@ export default function NewArtwork() {
     <>
       <AdminNavbar />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Add New Artwork</h1>
+        <h1 className="text-3xl mb-6">Add New Artwork</h1>
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}

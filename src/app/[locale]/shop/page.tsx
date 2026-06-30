@@ -106,7 +106,7 @@ export default function Shop() {
               </div>
 
               <div className="w-full md:w-auto">
-                <h3 className="text-sm font-medium text-gray-700 mb-1">
+                <h3 className="text-sm text-gray-700 mb-1">
                   {t("price")}
                 </h3>
                 <div className="flex items-center gap-2">
@@ -190,7 +190,7 @@ export default function Shop() {
                         )}
                       </div>
                       <div className="p-4">
-                        <h3 className="text-xl font-semibold">
+                        <h3 className="text-xl">
                           {artwork.title}
                         </h3>
                         <p className="text-gray-600">
@@ -234,7 +234,7 @@ export default function Shop() {
         )}
 
         <section className="commission-cta mt-16 bg-gray-50 p-8 rounded-lg border border-gray-200 text-center">
-          <h2 className="text-2xl font-bold mb-4">{t("ctaTitle")}</h2>
+          <h2 className="text-2xl mb-4">{t("ctaTitle")}</h2>
           <p className="text-gray-700 mb-6 max-w-2xl mx-auto">{t("ctaText")}</p>
           <Link
             href="/contact"

@@ -94,7 +94,7 @@ export default function Home() {
 
         {/* Featured Works Section */}
         <section className="featured-works py-16 container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8 text-center">
+          <h2 className="text-3xl mb-8 text-center">
             {t("firstSectionTitle")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -116,7 +116,7 @@ export default function Home() {
                     )}
                   </div>
                   <div className="p-4">
-                    <h3 className="text-xl font-semibold">{artwork.title}</h3>
+                    <h3 className="text-xl">{artwork.title}</h3>
                     <p className="text-gray-600">
                       {artwork.medium}, {artwork.year}
                     </p>

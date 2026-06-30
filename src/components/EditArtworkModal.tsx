@@ -199,7 +199,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto flex justify-center items-start pt-4 pb-20">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-auto">
         <div className="sticky top-0 bg-white p-4 border-b flex justify-between items-center">
-          <h2 className="text-xl font-bold">Edit Artwork</h2>
+          <h2 className="text-xl">Edit Artwork</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"

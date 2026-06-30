@@ -60,7 +60,7 @@ export default function ArtworkDetail() {
       <>
         <Navbar currentPath={`/artwork/${slug}`} />
         <div className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
+          <h1 className="text-2xl text-red-600 mb-4">Error</h1>
           <p className="mb-8">{error || 'Artwork not found'}</p>
         </div>
       </>
@@ -134,7 +134,7 @@ export default function ArtworkDetail() {
 
           {/* Artwork Details */}
           <div className="artwork-details">
-            <h1 className="text-3xl font-bold mb-2">{artwork.title}</h1>
+            <h1 className="text-3xl mb-2">{artwork.title}</h1>
 
             <div className="flex items-center mb-4">
               <p className="text-gray-600 mr-4">{artwork.medium}, {artwork.year}</p>
@@ -147,14 +147,14 @@ export default function ArtworkDetail() {
             <p className="text-2xl font-bold mb-6">${artwork.price}</p>
 
             <div className="prose max-w-none mb-8">
-              <h3 className="text-xl font-semibold mb-2">Description</h3>
+              <h3 className="text-xl mb-2">Description</h3>
               <p className="whitespace-pre-line">
                 {artwork.description[locale] || artwork.description['en']}
               </p>
             </div>
 
             <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-2">Details</h3>
+              <h3 className="text-xl mb-2">Details</h3>
               <ul className="space-y-2">
                 {artwork.dimensions && (
                   <li className="flex">
@@ -183,7 +183,7 @@ export default function ArtworkDetail() {
             )}
 
             <div className="mt-8 pt-8 border-t border-gray-200">
-              <h3 className="text-xl font-semibold mb-4">Have Questions?</h3>
+              <h3 className="text-xl mb-4">Have Questions?</h3>
               <p className="mb-4">
                 Contact the artist for inquiries about this artwork, commission requests, or shipping details.
               </p>

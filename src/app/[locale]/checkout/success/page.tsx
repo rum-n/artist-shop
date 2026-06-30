@@ -30,7 +30,7 @@ function SuccessContent() {
 
   return (
     <div className="container mx-auto px-4 py-16 text-center">
-      <h1 className="text-3xl font-bold mb-4">Thank You for Your Purchase!</h1>
+      <h1 className="text-3xl mb-4">Thank You for Your Purchase!</h1>
       <p className="text-xl mb-8">Your order has been successfully processed.</p>
 
       {loading ? (
@@ -62,7 +62,7 @@ export default function CheckoutSuccess() {
   return (
     <Suspense fallback={
       <div className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-3xl font-bold mb-4">Thank You for Your Purchase!</h1>
+        <h1 className="text-3xl mb-4">Thank You for Your Purchase!</h1>
         <p className="text-xl mb-8">Loading your order details...</p>
         <div className="flex justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>

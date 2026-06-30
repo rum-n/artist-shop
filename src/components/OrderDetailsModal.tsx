@@ -64,7 +64,7 @@ export default function OrderDetailsModal({ orderId, onClose }: OrderDetailsModa
       <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Order Details</h2>
+            <h2 className="text-2xl">Order Details</h2>
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700"
@@ -83,7 +83,7 @@ export default function OrderDetailsModal({ orderId, onClose }: OrderDetailsModa
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <h3 className="text-lg font-semibold mb-3">Order Information</h3>
+                  <h3 className="text-lg mb-3">Order Information</h3>
                   <div className="space-y-2">
                     <p><span className="font-medium">Order Number:</span> {order.orderNumber}</p>
                     <p><span className="font-medium">Date:</span> {new Date(order.createdAt).toLocaleString()}</p>
@@ -92,7 +92,7 @@ export default function OrderDetailsModal({ orderId, onClose }: OrderDetailsModa
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold mb-3">Customer Information</h3>
+                  <h3 className="text-lg mb-3">Customer Information</h3>
                   <div className="space-y-2">
                     <p><span className="font-medium">Name:</span> {order.customer.name || 'N/A'}</p>
                     <p><span className="font-medium">Email:</span> {order.customer.email}</p>
@@ -100,7 +100,7 @@ export default function OrderDetailsModal({ orderId, onClose }: OrderDetailsModa
                 </div>
               </div>
 
-              <h3 className="text-lg font-semibold mb-3">Order Items</h3>
+              <h3 className="text-lg mb-3">Order Items</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">

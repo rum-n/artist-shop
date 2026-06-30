@@ -62,7 +62,7 @@ export default function Gallery() {
       <Navbar currentPath="/gallery" />
       <main className="container mx-auto px-4 py-8">
         <section className="gallery-header py-8">
-          <h1 className="text-4xl font-bold mb-4 text-center">{t("title")}</h1>
+          <h1 className="text-4xl mb-4 text-center">{t("title")}</h1>
           <p className="text-xl text-gray-600 mb-8 text-center">
             {t("description")}
           </p>

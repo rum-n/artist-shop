@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Caveat } from "next/font/google";
+import { Geist, Geist_Mono, Caveat, Roboto } from "next/font/google";
 import "../globals.css";
 import { Providers } from "../providers";
 import Footer from "@/components/Footer";
@@ -22,6 +22,12 @@ const caveat = Caveat({
   subsets: ["latin"],
 });
 
+const roboto = Roboto({
+  variable: "--font-roboto",
+  weight: ["100", "300"],
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Violetta Boyadzhieva - Art Portfolio",
   description: "Discover unique artworks from a passionate creator",
@@ -41,7 +47,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} ${roboto.variable} antialiased`}>
         <NextIntlClientProvider>
           <Providers>
             {children}
