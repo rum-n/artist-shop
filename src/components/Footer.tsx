@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-const SUBSTACK_URL = "https://substack.com/@violettaboya";
+const SUBSTACK_EMBED_URL = "https://violettaboya.substack.com/embed";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -20,15 +20,13 @@ export default function Footer() {
         <div className="flex flex-col items-center text-center gap-4 max-w-2xl mx-auto">
           <h2 className="text-2xl">{t("newsletterTitle")}</h2>
           <p className="text-primary-100">{t("newsletterText")}</p>
-          <a
-            href={SUBSTACK_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-flex items-center gap-2 bg-white text-primary-800 px-6 py-3 rounded-md hover:bg-primary-50 transition font-medium"
-          >
-            {t("newsletterButton")}
-            <span aria-hidden="true">→</span>
-          </a>
+          <iframe
+            src={SUBSTACK_EMBED_URL}
+            title={t("newsletterTitle")}
+            width={480}
+            height={320}
+            className="mt-2 w-full max-w-[480px] rounded-md border border-gray-200 bg-white"
+          ></iframe>
         </div>
 
         <div className="mt-10 pt-6 border-t border-primary-800 text-center text-sm text-primary-200">
