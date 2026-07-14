@@ -1,24 +1,37 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /*
- * Brand palette: a soft, artistic dusty-rose / mauve used as the primary
- * accent across buttons, links and focus states.
+ * Brand palette — warm, earthy tones.
+ *   cream  #EBE5D5  page background
+ *   sage   #AAA786  muted accent / borders
+ *   bronze #BC9362  logo & highlights
+ *   slate  #3F4947  primary text / dark accents
+ * `primary-*` mirrors the same bronze so existing button/link utilities
+ * pick up the new palette without touching every className.
  */
 @theme {
-  --color-primary-50: #fbf4f7;
-  --color-primary-100: #f6e6ee;
-  --color-primary-200: #efcfdd;
-  --color-primary-300: #e1a9c2;
-  --color-primary-400: #cd7ba0;
-  --color-primary-500: #bd6790;
-  --color-primary-600: #a44f76;
-  --color-primary-700: #883f60;
-  --color-primary-800: #713551;
-  --color-primary-900: #5f2e45;
+  --color-cream: #ebe5d5;
+  --color-sage: #aaa786;
+  --color-bronze: #bc9362;
+  --color-slate: #3f4947;
+
+  --color-primary-50: #f6f2ea;
+  --color-primary-100: #ece4d5;
+  --color-primary-200: #ddccb2;
+  --color-primary-300: #cdb28c;
+  --color-primary-400: #c2a277;
+  --color-primary-500: #bc9362;
+  --color-primary-600: #a67d4e;
+  --color-primary-700: #866340;
+  --color-primary-800: #6b4f36;
+  --color-primary-900: #3f4947;
 }
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-cream);
+  color: var(--color-slate);
 }
 
 h1,

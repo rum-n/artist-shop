@@ -66,7 +66,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-black opacity-40"></div>
             </div>
           ) : (
-            <div className="absolute inset-0 bg-white"></div>
+            <div className="absolute inset-0 bg-cream"></div>
           )}
 
           <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center items-center text-center">

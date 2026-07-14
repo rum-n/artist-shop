@@ -22,14 +22,14 @@ export default function Navbar({ currentPath }: NavbarProps) {
   };
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-cream shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Artist Name / Logo */}
           <div className="flex-shrink-0">
             <Link
               href="/"
-              className="text-3xl font-bold text-gray-800 font-[family-name:var(--font-caveat)]"
+              className="text-3xl font-bold text-bronze font-[family-name:var(--font-caveat)]"
             >
               Violetta Boyadzhieva
             </Link>
