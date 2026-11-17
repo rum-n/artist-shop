@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { getErrorMessage } from '@/lib/apiError';
+
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 interface ImageUploaderProps {
   onUploadComplete: (url: string) => void;
@@ -21,9 +24,10 @@ export default function ImageUploader({ onUploadComplete }: ImageUploaderProps) 
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be less than 5MB');
+    // Validate file size. The hosting platform rejects request bodies over
+    // 4.5MB before the route runs, so cap below that.
+    if (file.size > MAX_IMAGE_BYTES) {
+      toast.error('Image must be less than 4MB');
       return;
     }
 
@@ -42,7 +46,9 @@ export default function ImageUploader({ onUploadComplete }: ImageUploaderProps) 
       });
 
       if (!response.ok) {
-        throw new Error('Failed to upload image');
+        throw new Error(
+          await getErrorMessage(response, 'Failed to upload image')
+        );
       }
 
       setProgress(90);
@@ -51,7 +57,9 @@ export default function ImageUploader({ onUploadComplete }: ImageUploaderProps) 
       toast.success('Image uploaded successfully');
     } catch (error) {
       console.error('Error uploading image:', error);
-      toast.error('Failed to upload image');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to upload image'
+      );
     } finally {
       setIsUploading(false);
       setProgress(0);
@@ -106,7 +114,7 @@ export default function ImageUploader({ onUploadComplete }: ImageUploaderProps) 
               />
             </svg>
             <p className="mt-1 text-sm">Click to upload an image</p>
-            <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+            <p className="text-xs text-gray-500">PNG, JPG, GIF up to 4MB</p>
           </label>
           <input
             id="image-upload"

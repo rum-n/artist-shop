@@ -8,6 +8,7 @@ import Image from "next/image";
 import ImageUploader from "@/components/ImageUploader";
 import { toast } from "react-hot-toast";
 import { ArtworkFormData, Series } from "@/types/Artwork";
+import { getErrorMessage } from "@/lib/apiError";
 
 export default function NewArtwork() {
   const { status } = useSession();
@@ -121,30 +122,35 @@ export default function NewArtwork() {
     setError("");
 
     try {
-      const formDataToSend = new FormData();
-
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key === "description") {
-          formDataToSend.append(key, JSON.stringify(value));
-        } else if (key !== "images") {
-          formDataToSend.append(key, value.toString());
-        }
-      });
-
-      for (const image of formData.images) {
-        const response = await fetch(image.url);
-        const blob = await response.blob();
-        formDataToSend.append(`image-${image.url}`, blob);
-      }
-
+      // The images are already on Cloudinary (ImageUploader put them there), so
+      // only their URLs are sent. Re-posting the bytes would blow past the
+      // request body limit and get the whole submit rejected.
       const response = await fetch("/api/artwork", {
         method: "POST",
-        body: formDataToSend,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: formData.title,
+          slug: formData.slug,
+          description: formData.description,
+          price: Number(formData.price),
+          medium: formData.medium,
+          year: Number(formData.year),
+          dimensions: {
+            width: Number(formData.width),
+            height: Number(formData.height),
+            unit: formData.unit,
+          },
+          inStock: formData.inStock,
+          featured: formData.featured,
+          seriesId: formData.seriesId || null,
+          images: formData.images,
+        }),
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Failed to create artwork");
+        throw new Error(
+          await getErrorMessage(response, "Failed to create artwork")
+        );
       }
 
       router.push("/admin/artworks");

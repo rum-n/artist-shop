@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import ImageUploader from '@/components/ImageUploader';
 import Image from 'next/image';
 import { Series } from '@/types/Artwork';
+import { getErrorMessage } from '@/lib/apiError';
 
 interface ArtworkFormData {
   id: string;
@@ -192,8 +193,9 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to update artwork');
+        throw new Error(
+          await getErrorMessage(response, 'Failed to update artwork')
+        );
       }
 
       toast.success('Artwork updated successfully');

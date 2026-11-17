@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { uploadImage } from "@/lib/uploadImage";
-import { isValidImageUrl } from "@/lib/imageUrl";
+import { areImagesValid, isValidImageUrl } from "@/lib/imageUrl";
 import { Artwork } from "@/types/Artwork";
 
 type Dimensions = {
@@ -21,23 +20,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    // Parse form data
-    const formData = await request.formData();
+    // Images arrive as Cloudinary URLs already uploaded via /api/upload, so the
+    // body stays small enough to never hit the platform's request size limit.
+    const body = await request.json();
 
-    // Extract text fields
-    const title = formData.get("title") as string;
-    const slug = formData.get("slug") as string;
-    const description = JSON.parse(formData.get("description") as string);
-    const price = parseFloat(formData.get("price") as string);
-    const medium = formData.get("medium") as string;
-    const year = parseInt(formData.get("year") as string);
-    const width = parseFloat(formData.get("width") as string);
-    const height = parseFloat(formData.get("height") as string);
-    const unit = formData.get("unit") as string;
-    const inStock = formData.get("inStock") === "true";
-    const featured = formData.get("featured") === "true";
-    const seriesIdValue = formData.get("seriesId") as string | null;
-    const seriesId = seriesIdValue ? seriesIdValue : null;
+    const title = body.title as string;
+    const slug = body.slug as string;
+    const description = body.description;
+    const price = Number(body.price);
+    const medium = body.medium as string;
+    const year = Number(body.year);
+    const width = Number(body.dimensions?.width);
+    const height = Number(body.dimensions?.height);
+    const unit = body.dimensions?.unit as string;
+    const inStock = Boolean(body.inStock);
+    const featured = Boolean(body.featured);
+    const seriesId = body.seriesId ? (body.seriesId as string) : null;
 
     // Validate required fields
     if (
@@ -57,26 +55,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Process images
-    const imageUrls = [];
-
-    for (const [key, value] of formData.entries()) {
-      if (key.startsWith("image-") && value instanceof Blob) {
-        const imageUrl = await uploadImage(value);
-        // Guard against an upload that didn't return a real URL, so we never
-        // persist a broken image reference.
-        if (!isValidImageUrl(imageUrl)) {
-          return NextResponse.json(
-            { message: "Image upload failed" },
-            { status: 502 }
-          );
-        }
-        imageUrls.push({
-          url: imageUrl,
-          alt: title, // Default alt text
-        });
-      }
+    // Reject anything that isn't a real uploaded URL so broken image
+    // references can never be persisted.
+    if (!areImagesValid(body.images)) {
+      return NextResponse.json(
+        { message: "One or more images have an invalid URL" },
+        { status: 400 }
+      );
     }
+
+    const imageUrls = (body.images as { url: string; alt?: string }[]).map(
+      (image) => ({
+        url: image.url,
+        alt: image.alt || title, // Default alt text
+      })
+    );
 
     if (imageUrls.length === 0) {
       return NextResponse.json(

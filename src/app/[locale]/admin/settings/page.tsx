@@ -6,9 +6,13 @@ import { useSession } from 'next-auth/react';
 import AdminNavbar from '@/components/AdminNavbar';
 import dynamic from 'next/dynamic';
 
+import { getErrorMessage } from '@/lib/apiError';
+
 const ClientMDXEditor = dynamic(() => import('@/components/ClientMDXEditor'), {
   ssr: false,
 });
+
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 export default function SiteSettings() {
   const { status } = useSession();
@@ -59,7 +63,19 @@ export default function SiteSettings() {
 
   const handleHeroImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setHeroImage(e.target.files[0]);
+      const file = e.target.files[0];
+
+      // The hosting platform rejects request bodies over 4.5MB before the
+      // route runs, so refuse oversized files up front.
+      if (file.size > MAX_IMAGE_BYTES) {
+        setHeroImage(null);
+        e.target.value = '';
+        setError('Image must be less than 4MB');
+        return;
+      }
+
+      setError('');
+      setHeroImage(file);
     }
   };
 
@@ -81,14 +97,20 @@ export default function SiteSettings() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update hero image');
+        throw new Error(
+          await getErrorMessage(response, 'Failed to update hero image')
+        );
       }
 
       const data = await response.json();
       setCurrentHeroImage(data.imageUrl);
       setSuccessMessage('Hero image updated successfully');
     } catch (error) {
-      setError('An error occurred while updating the hero image');
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while updating the hero image'
+      );
       console.error(error);
     } finally {
       setIsSubmitting(false);
