@@ -2,6 +2,28 @@ import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/requireAdmin";
 
+export async function GET() {
+  try {
+    const setting = await db.siteSettings.findUnique({
+      where: { key: "homepageContent" },
+    });
+
+    const value = setting?.value;
+    const content =
+      typeof value === "string"
+        ? value
+        : (value as { content?: string } | null)?.content ?? "";
+
+    return NextResponse.json({ content });
+  } catch (error) {
+    console.error("Error fetching homepage content:", error);
+    return NextResponse.json(
+      { message: "Failed to fetch homepage content" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const denied = await requireAdmin();

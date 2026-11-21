@@ -42,6 +42,11 @@ export default async function Home({
           </section>
         )}
 
+        {/*
+          Dropped entirely when there is no welcome text — a lone "read more"
+          under a section's worth of padding reads as a broken block. The nav
+          still links to the about page.
+        */}
         {homepageContent && (
           <section className="page-shell section">
             <div className="measure prose prose-lg">

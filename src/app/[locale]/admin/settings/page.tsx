@@ -33,34 +33,43 @@ export default function SiteSettings() {
   const [editorLoaded, setEditorLoaded] = useState(false);
   const [homepageContent, setHomepageContent] = useState('');
 
+  /*
+   * MDXEditor is uncontrolled: it reads `markdown` once, on mount, and ignores
+   * later changes to it. So the editors must not be rendered until their
+   * content has arrived — otherwise they mount empty, and saving writes that
+   * empty value over whatever was stored.
+   */
   useEffect(() => {
-    // Fetch current hero image
-    const fetchHeroImage = async () => {
-      try {
-        const response = await fetch('/api/settings/hero-image');
-        const data = await response.json();
-        setCurrentHeroImage(data.imageUrl);
-        setHomepageContent(data.homepageContent.value.content);
-      } catch (error) {
-        console.error('Error fetching hero image:', error);
+    const load = async () => {
+      const [heroResult, aboutResult, homepageResult] = await Promise.allSettled([
+        fetch('/api/settings/hero-image').then((r) => r.json()),
+        fetch('/api/settings/about-me').then((r) => r.json()),
+        fetch('/api/settings/homepage-content').then((r) => r.json()),
+      ]);
+
+      if (heroResult.status === 'fulfilled') {
+        setCurrentHeroImage(heroResult.value.imageUrl ?? null);
+      } else {
+        console.error('Error fetching hero image:', heroResult.reason);
       }
+
+      if (aboutResult.status === 'fulfilled') {
+        setAboutMeContent(aboutResult.value.content || '');
+      } else {
+        console.error('Error fetching about me content:', aboutResult.reason);
+      }
+
+      if (homepageResult.status === 'fulfilled') {
+        setHomepageContent(homepageResult.value.content || '');
+      } else {
+        console.error('Error fetching homepage content:', homepageResult.reason);
+      }
+
+      // Only now is it safe to mount the editors.
+      setEditorLoaded(true);
     };
 
-    // Fetch current about me content
-    const fetchAboutMeContent = async () => {
-      try {
-        const response = await fetch('/api/settings/about-me');
-        const data = await response.json();
-        setAboutMeContent(data.content || '');
-        setEditorLoaded(true);
-      } catch (error) {
-        console.error('Error fetching about me content:', error);
-        setEditorLoaded(true);
-      }
-    };
-
-    fetchHeroImage();
-    fetchAboutMeContent();
+    load();
   }, []);
 
   const handleHeroImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
