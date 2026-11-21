@@ -195,7 +195,7 @@ export default function Shop() {
                         )}
                       </Link>
                       <div className="pt-4">
-                        <h3 className="text-title mb-1">{artwork.title}</h3>
+                        <h3 className="mb-1">{artwork.title}</h3>
                         <p className="text-ink/60">
                           {artwork.medium}, {artwork.year}
                         </p>

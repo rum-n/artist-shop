@@ -36,7 +36,7 @@ export default function Navbar({ currentPath }: NavbarProps) {
           <div className="flex-shrink-0">
             <Link
               href="/"
-              className="font-display text-title font-medium text-ink"
+              className="font-display text-logo font-medium text-ink"
             >
               Violetta Boyadzhieva
             </Link>

@@ -113,14 +113,14 @@ export default function ArtworkDetail() {
             <p className="text-2xl mb-8">{formatPrice(artwork.price, locale)}</p>
 
             <div className="prose max-w-none mb-8">
-              <h3 className="text-title">{t('description')}</h3>
+              <h3>{t('description')}</h3>
               <p className="whitespace-pre-line">
                 {artwork.description[locale] || artwork.description['en']}
               </p>
             </div>
 
             <div className="mb-8">
-              <h3 className="text-title">{t('details')}</h3>
+              <h3>{t('details')}</h3>
               <ul className="space-y-2">
                 {artwork.dimensions && (
                   <li className="flex">
@@ -147,7 +147,7 @@ export default function ArtworkDetail() {
             )}
 
             <div className="mt-8 pt-8 border-t border-line">
-              <h3 className="text-title">{t('questionsTitle')}</h3>
+              <h3>{t('questionsTitle')}</h3>
               <p className="mb-4">{t('questionsText')}</p>
               <Link
                 href="/contact"
