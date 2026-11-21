@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import { useTranslations, useLocale } from "next-intl";
-import { Series } from "@/types/Artwork";
+import { ArtworkImage, Series } from "@/types/Artwork";
+import { cloudinarySrcSet, optimizedImageUrl } from "@/lib/cloudinary";
 
 interface ArtworkWithImages {
   id: string;
@@ -21,20 +22,9 @@ interface ArtworkWithImages {
     height: string;
     unit: string;
   };
-  images?: Array<{
-    url: string;
-    alt?: string;
-  }>;
+  images?: ArtworkImage[];
   createdAt?: Date;
   updatedAt?: Date;
-}
-
-// Let Cloudinary auto-format/compress and cap width for delivery, keeping the
-// image's natural aspect ratio (only width is constrained).
-function optimized(url: string) {
-  return url.includes("/upload/")
-    ? url.replace("/upload/", "/upload/f_auto,q_auto,w_800/")
-    : url;
 }
 
 function ArtworkCard({ artwork }: { artwork: ArtworkWithImages }) {
@@ -44,29 +34,57 @@ function ArtworkCard({ artwork }: { artwork: ArtworkWithImages }) {
       ? `${dims.width} × ${dims.height} ${dims.unit}`.trim()
       : "";
 
+  const images = artwork.images ?? [];
+  const [primary, secondary] = images;
+
   return (
     <Link
       href={`/artwork/${artwork.slug}`}
       className="group block mb-10 break-inside-avoid"
     >
-      {artwork.images && artwork.images[0] ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={optimized(artwork.images[0].url)}
-          alt={artwork.title}
-          loading="lazy"
-          className="w-full h-auto transition-opacity duration-300 group-hover:opacity-90"
-        />
+      {primary ? (
+        /*
+         * The first image sets the card's height (the masonry columns rely on
+         * the natural ratio), and the second is laid over it and faded in on
+         * hover. Artworks with a single image simply don't change.
+         */
+        <div className="relative overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={optimizedImageUrl(primary.url)}
+            srcSet={cloudinarySrcSet(primary.url, [400, 600, 800, 1200])}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            alt={artwork.title}
+            width={primary.width}
+            height={primary.height}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-auto"
+          />
+          {secondary && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={optimizedImageUrl(secondary.url)}
+              srcSet={cloudinarySrcSet(secondary.url, [400, 600, 800, 1200])}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+            />
+          )}
+        </div>
       ) : (
-        <div className="w-full aspect-square bg-black/5 flex items-center justify-center">
-          <span className="text-slate/40">No image available</span>
+        <div className="w-full aspect-square bg-primary-50 flex items-center justify-center">
+          <span className="text-ink/40">No image available</span>
         </div>
       )}
       <div className="text-center mt-3">
-        <p className="text-slate group-hover:text-bronze transition-colors">
+        <p className="text-ink transition-opacity group-hover:opacity-60">
           {artwork.title}
         </p>
-        {dimText && <p className="text-sm text-slate/60 italic">{dimText}</p>}
+        {dimText && <p className="text-menu text-ink/60">{dimText}</p>}
       </div>
     </Link>
   );
@@ -126,32 +144,32 @@ export default function Gallery() {
       <Navbar currentPath="/gallery" />
       <main className="container mx-auto px-4 py-8">
         <section className="gallery-header py-8">
-          <h1 className="text-4xl mb-4 text-center">{t("title")}</h1>
-          <p className="text-xl text-slate/70 mb-8 text-center">
+          <h1 className="text-center">{t("title")}</h1>
+          <p className="text-ink/60 mb-8 text-center">
             {t("description")}
           </p>
         </section>
 
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-bronze"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t border-b border-ink"></div>
           </div>
         ) : artworks.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-xl text-slate/70">No artworks to show yet.</p>
+            <p className="text-ink/60">No artworks to show yet.</p>
           </div>
         ) : (
           <div className="space-y-16">
             {groupedSeries.map(({ series: s, items }) => (
               <section key={s.id} className="series-section">
                 <div className="text-center mb-8">
-                  <h2 className="text-3xl">{s.name}</h2>
+                  <h2>{s.name}</h2>
                   {seriesDescription(s) && (
-                    <p className="text-slate/70 mt-2 max-w-2xl mx-auto">
+                    <p className="text-ink/60 mt-2 max-w-2xl mx-auto">
                       {seriesDescription(s)}
                     </p>
                   )}
-                  <div className="w-16 h-px bg-sage mx-auto mt-4"></div>
+                  <div className="w-16 h-px bg-line mx-auto mt-4"></div>
                 </div>
                 <div className={masonry}>
                   {items.map((artwork) => (
@@ -165,8 +183,8 @@ export default function Gallery() {
               <section className="series-section">
                 {groupedSeries.length > 0 && (
                   <div className="text-center mb-8">
-                    <h2 className="text-3xl">{t("otherWorks")}</h2>
-                    <div className="w-16 h-px bg-sage mx-auto mt-4"></div>
+                    <h2>{t("otherWorks")}</h2>
+                    <div className="w-16 h-px bg-line mx-auto mt-4"></div>
                   </div>
                 )}
                 <div className={masonry}>

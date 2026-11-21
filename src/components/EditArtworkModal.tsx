@@ -4,25 +4,26 @@ import { useState, useEffect, FormEvent } from 'react';
 import { toast } from 'react-hot-toast';
 import ImageUploader from '@/components/ImageUploader';
 import Image from 'next/image';
-import { Series } from '@/types/Artwork';
+import { ArtworkImage, Series } from '@/types/Artwork';
 import { getErrorMessage } from '@/lib/apiError';
 
 interface ArtworkFormData {
   id: string;
   title: string;
   slug: string;
-  description: string;
+  description: { [locale: string]: string };
   price: number;
   medium: string;
   year: number;
   dimensions: {
     width: number;
     height: number;
+    unit: string;
   };
   inStock: boolean;
   featured: boolean;
   seriesId?: string | null;
-  images: { url: string; alt?: string }[];
+  images: ArtworkImage[];
 }
 
 interface EditArtworkModalProps {
@@ -38,11 +39,11 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
     id: '',
     title: '',
     slug: '',
-    description: '',
+    description: { en: '', bg: '' },
     price: 0,
     medium: '',
     year: new Date().getFullYear(),
-    dimensions: { width: 0, height: 0 },
+    dimensions: { width: 0, height: 0, unit: 'cm' },
     inStock: true,
     featured: false,
     seriesId: '',
@@ -98,9 +99,14 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
           // Ensure proper type conversion for numeric fields
           price: Number(data.artwork.price),
           year: Number(data.artwork.year),
+          description: {
+            en: data.artwork.description?.en || '',
+            bg: data.artwork.description?.bg || '',
+          },
           dimensions: {
             width: Number(data.artwork.dimensions?.width || 0),
             height: Number(data.artwork.dimensions?.height || 0),
+            unit: data.artwork.dimensions?.unit || 'cm',
           },
         });
       } catch (error) {
@@ -115,13 +121,20 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
     fetchArtwork();
   }, [artworkId, onClose]);
 
+  const handleDescriptionChange = (locale: string, value: string) => {
+    setFormData({
+      ...formData,
+      description: { ...formData.description, [locale]: value },
+    });
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
 
     if (name.includes('.')) {
       // Handle nested properties (for dimensions)
       const [parent, child] = name.split('.');
-      if (parent === 'dimensions' && (child === 'width' || child === 'height')) {
+      if (parent === 'dimensions' && (child === 'width' || child === 'height' || child === 'unit')) {
         setFormData({
           ...formData,
           dimensions: {
@@ -148,7 +161,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
     }
   };
 
-  const handleImageUpload = (url: string) => {
+  const handleImageUpload = (image: Omit<ArtworkImage, 'alt'>) => {
     if (formData.images.length >= 3) {
       toast.error('Maximum of 3 images allowed per artwork');
       return;
@@ -156,7 +169,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
 
     setFormData({
       ...formData,
-      images: [...formData.images, { url, alt: formData.title }],
+      images: [...formData.images, { ...image, alt: formData.title }],
     });
   };
 
@@ -315,10 +328,10 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     <div>
                       <label htmlFor="dimensions.width" className="block text-sm font-medium text-gray-700">
-                        Width (cm)
+                        Width
                       </label>
                       <input
                         type="number"
@@ -334,7 +347,7 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
 
                     <div>
                       <label htmlFor="dimensions.height" className="block text-sm font-medium text-gray-700">
-                        Height (cm)
+                        Height
                       </label>
                       <input
                         type="number"
@@ -346,6 +359,22 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                         step="0.1"
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                       />
+                    </div>
+
+                    <div>
+                      <label htmlFor="dimensions.unit" className="block text-sm font-medium text-gray-700">
+                        Unit
+                      </label>
+                      <select
+                        id="dimensions.unit"
+                        name="dimensions.unit"
+                        value={formData.dimensions.unit}
+                        onChange={handleChange}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      >
+                        <option value="cm">centimeters</option>
+                        <option value="in">inches</option>
+                      </select>
                     </div>
                   </div>
 
@@ -401,19 +430,24 @@ export default function EditArtworkModal({ artworkId, onClose, onSave }: EditArt
                 </div>
 
                 <div className="space-y-4">
-                  <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                      Description
-                    </label>
-                    <textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                      rows={6}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                    />
-                  </div>
+                  {['en', 'bg'].map((lang) => (
+                    <div key={lang}>
+                      <label
+                        htmlFor={`description-${lang}`}
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Description ({lang.toUpperCase()})
+                      </label>
+                      <textarea
+                        id={`description-${lang}`}
+                        name={`description-${lang}`}
+                        value={formData.description[lang] || ''}
+                        onChange={(e) => handleDescriptionChange(lang, e.target.value)}
+                        rows={6}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      />
+                    </div>
+                  ))}
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">

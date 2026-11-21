@@ -1,3 +1,14 @@
+// A type alias rather than an interface: Prisma's Json[] input requires an
+// implicit index signature, which TypeScript only grants to aliases.
+export type ArtworkImage = {
+  url: string;
+  alt: string;
+  /** Pixel dimensions from Cloudinary; absent on images uploaded before these
+   * were stored, in which case the browser measures the image instead. */
+  width?: number;
+  height?: number;
+};
+
 export interface Artwork {
   id: string;
   title: string;
@@ -5,7 +16,7 @@ export interface Artwork {
   price: number;
   medium: string;
   year: number;
-  images?: { url: string; alt: string }[];
+  images?: ArtworkImage[];
   description: { [key: string]: string };
   dimensions: {
     width: string;
@@ -31,7 +42,7 @@ export interface ArtworkFormData {
   inStock: boolean;
   featured: boolean;
   seriesId?: string | null;
-  images: { url: string; alt: string }[];
+  images: ArtworkImage[];
 }
 
 export interface Series {

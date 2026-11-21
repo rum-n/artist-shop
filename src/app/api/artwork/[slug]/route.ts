@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { authOptions } from '@/lib/auth';
-import { getServerSession } from 'next-auth';
-import { areImagesValid } from '@/lib/imageUrl';
+import { areImagesValid, normalizeImages } from '@/lib/imageUrl';
+import { requireAdmin } from '@/lib/requireAdmin';
 
 export async function GET(
   request: Request,
@@ -35,7 +34,23 @@ export async function GET(
       return NextResponse.json({ message: 'Artwork not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ artwork });
+    // `description` is stored as a JSON string of { en, bg }. The list endpoint
+    // parses it before returning; this one has to do the same, otherwise the
+    // client gets a string and every per-locale lookup on it is undefined.
+    let description;
+    try {
+      description = JSON.parse(artwork.description);
+    } catch {
+      description = { en: artwork.description, bg: '' };
+    }
+
+    return NextResponse.json({
+      artwork: {
+        ...artwork,
+        description,
+        images: normalizeImages(artwork.images, artwork.title),
+      },
+    });
   } catch (error) {
     console.error('Error fetching artwork:', error);
     return NextResponse.json(
@@ -50,10 +65,9 @@ export async function PUT(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    const denied = await requireAdmin();
+    if (denied) {
+      return denied;
     }
 
     const body = await request.json();
@@ -108,7 +122,10 @@ export async function PUT(
       data: {
         title: body.title,
         slug: body.slug,
-        description: body.description,
+        description:
+          typeof body.description === 'string'
+            ? body.description
+            : JSON.stringify(body.description),
         price: body.price,
         medium: body.medium,
         year: body.year,
@@ -135,10 +152,9 @@ export async function DELETE(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    const denied = await requireAdmin();
+    if (denied) {
+      return denied;
     }
 
     const artworkId = (await params).slug;

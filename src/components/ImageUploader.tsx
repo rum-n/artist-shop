@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { getErrorMessage } from '@/lib/apiError';
+import { ArtworkImage } from '@/types/Artwork';
 
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 interface ImageUploaderProps {
-  onUploadComplete: (url: string) => void;
+  onUploadComplete: (image: Omit<ArtworkImage, 'alt'>) => void;
 }
 
 export default function ImageUploader({ onUploadComplete }: ImageUploaderProps) {
@@ -53,7 +54,11 @@ export default function ImageUploader({ onUploadComplete }: ImageUploaderProps) 
 
       setProgress(90);
       const data = await response.json();
-      onUploadComplete(data.url);
+      onUploadComplete({
+        url: data.url,
+        width: data.width,
+        height: data.height,
+      });
       toast.success('Image uploaded successfully');
     } catch (error) {
       console.error('Error uploading image:', error);

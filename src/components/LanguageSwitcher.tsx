@@ -80,7 +80,7 @@ export default function LanguageSwitcher() {
     <div className="relative">
       <button
         onClick={toggleDropdown}
-        className="flex items-center text-gray-600 hover:text-gray-900 focus:outline-none cursor-pointer"
+        className="flex items-center text-ink/60 hover:text-ink transition-colors focus:outline-none cursor-pointer"
       >
         <span>{currentLocale.toUpperCase()}</span>
         <svg
@@ -100,7 +100,7 @@ export default function LanguageSwitcher() {
       </button>
 
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-20 bg-white rounded-md shadow-lg z-100">
+        <div className="absolute right-0 mt-2 w-20 bg-white border border-line shadow-sm z-100">
           <div className="py-1">
             {languages.map((lang) => (
               <button
@@ -108,8 +108,8 @@ export default function LanguageSwitcher() {
                 onClick={() => handleLocaleChange(lang.code)}
                 className={`block px-4 py-2 text-sm cursor-pointer ${
                   currentLocale === lang.code
-                    ? "text-gray-900 bg-gray-100"
-                    : "text-gray-700 hover:bg-gray-100"
+                    ? "text-ink bg-primary-50"
+                    : "text-ink/60 hover:bg-primary-50"
                 } w-full text-left cursor-pointer`}
               >
                 {lang.name}

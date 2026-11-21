@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Caveat, Roboto } from "next/font/google";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "../globals.css";
 import { Providers } from "../providers";
 import Footer from "@/components/Footer";
@@ -7,25 +7,18 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Both faces carry Cyrillic, so the Bulgarian pages render in the same
+// typefaces as the English ones rather than falling back to a system font.
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const caveat = Caveat({
-  variable: "--font-caveat",
-  subsets: ["latin"],
-});
-
-const roboto = Roboto({
-  variable: "--font-roboto",
-  weight: ["100", "300"],
-  subsets: ["latin"],
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -47,7 +40,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} ${roboto.variable} antialiased`}>
+      <body className={`${cormorant.variable} ${manrope.variable} antialiased`}>
         <NextIntlClientProvider>
           <Providers>
             {children}

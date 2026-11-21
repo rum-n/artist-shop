@@ -2,28 +2,34 @@ import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcrypt';
 import { db } from '@/lib/db';
 
-// This should be a secure, randomly generated string
 const API_SECRET = process.env.API_SECRET;
 
+/*
+ * Creating an account is gated on API_SECRET, which is never returned by this
+ * route — there is deliberately no GET handler. Once the artist's admin user
+ * exists, this route can be deleted outright.
+ */
 export async function POST(request: NextRequest) {
   try {
-    // Check for API secret in headers
+    // Without a configured secret there is no way to authorise the caller, and
+    // comparing against `Bearer undefined` would let anyone through.
+    if (!API_SECRET) {
+      console.error('API_SECRET is not configured; refusing to create users.');
+      return NextResponse.json({ message: 'Not available' }, { status: 503 });
+    }
+
     const authHeader = request.headers.get('authorization');
     if (!authHeader || authHeader !== `Bearer ${API_SECRET}`) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    console.log('Request body:', body); // Debug log
+    // Never logged: the body carries a plaintext password.
+    const { email, name, password, role } = await request.json();
 
-    const { email, name, password, role } = body;
-
-    // Validate required fields
     if (!email || !password) {
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
     }
 
-    // Check if user already exists
     const existingUser = await db.user.findUnique({
       where: { email },
     });
@@ -32,10 +38,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'User with this email already exists' }, { status: 400 });
     }
 
-    // Hash the password
     const hashedPassword = await hash(password, 10);
 
-    // Create the user
     const user = await db.user.create({
       data: {
         email,
@@ -45,26 +49,16 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log('User created:', user.id); // Debug log
-
-    return NextResponse.json({ user }, { status: 201 });
+    // Only non-sensitive fields: the full record includes the password hash.
+    return NextResponse.json(
+      { user: { id: user.id, email: user.email, role: user.role } },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating user:', error);
-    // Return more detailed error information
     return NextResponse.json(
-      {
-        message: 'An error occurred while creating the user',
-        error: error instanceof Error ? error.message : String(error)
-      },
+      { message: 'An error occurred while creating the user' },
       { status: 500 }
     );
   }
-}
-
-// GET method to check if the endpoint is available
-export async function GET() {
-  return NextResponse.json({
-    message: 'Admin user creation endpoint is active',
-    apiSecret: API_SECRET
-  });
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { formatPrice } from "@/lib/price";
 
 interface OrderDetailsModalProps {
   orderId: string | null;
@@ -142,7 +143,7 @@ export default function OrderDetailsModal({ orderId, onClose }: OrderDetailsModa
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">${item.price.toFixed(2)}</div>
+                          <div className="text-sm text-gray-900">{formatPrice(item.price)}</div>
                         </td>
                       </tr>
                     ))}

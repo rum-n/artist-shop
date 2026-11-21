@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { Artwork } from "@/types/Artwork";
 import BuyButton from "@/components/BuyButton";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { formatPrice } from "@/lib/price";
+import { cloudinarySrcSet, optimizedImageUrl } from "@/lib/cloudinary";
 
 export default function Shop() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
@@ -14,6 +15,7 @@ export default function Shop() {
   const [sortOption, setSortOption] = useState("newest");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
   const t = useTranslations("ShopPage");
+  const locale = useLocale();
 
   useEffect(() => {
     const fetchArtworks = async () => {
@@ -79,14 +81,14 @@ export default function Shop() {
 
       <main className="container mx-auto px-4 py-8">
         <section className="shop-filters mb-8">
-          <div className="p-6 rounded-lg border border-gray-200">
+          <div className="p-6 border border-line">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
                 <div className="flex flex-wrap gap-4">
                   <div>
                     <label
                       htmlFor="sort"
-                      className="block text-sm font-medium text-gray-700 mb-1"
+                      className="block text-menu text-ink/60 mb-1"
                     >
                       {t("sort")}
                     </label>
@@ -94,7 +96,7 @@ export default function Shop() {
                       id="sort"
                       value={sortOption}
                       onChange={handleSortChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm h-7 px-1"
+                      className="block w-full border border-line text-menu h-8 px-2"
                     >
                       <option value="newest">{t("newest")}</option>
                       <option value="oldest">{t("oldest")}</option>
@@ -106,16 +108,16 @@ export default function Shop() {
               </div>
 
               <div className="w-full md:w-auto">
-                <h3 className="text-sm text-gray-700 mb-1">
+                <p className="text-menu text-ink/60 mb-1">
                   {t("price")}
-                </h3>
+                </p>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handlePriceRangeChange(0, 10000)}
                     className={`px-3 py-1 text-sm rounded-full ${
                       priceRange[0] === 0 && priceRange[1] === 10000
-                        ? "bg-primary-600 text-white"
-                        : "bg-white text-gray-700 border border-gray-300"
+                        ? "bg-ink text-white"
+                        : "bg-white text-ink/70 border border-line hover:border-ink"
                     }`}
                   >
                     {t("all")}
@@ -124,8 +126,8 @@ export default function Shop() {
                     onClick={() => handlePriceRangeChange(0, 500)}
                     className={`px-3 py-1 text-sm rounded-full ${
                       priceRange[0] === 0 && priceRange[1] === 500
-                        ? "bg-primary-600 text-white"
-                        : "bg-white text-gray-700 border border-gray-300"
+                        ? "bg-ink text-white"
+                        : "bg-white text-ink/70 border border-line hover:border-ink"
                     }`}
                   >
                     {t("under500")}
@@ -134,8 +136,8 @@ export default function Shop() {
                     onClick={() => handlePriceRangeChange(500, 1000)}
                     className={`px-3 py-1 text-sm rounded-full ${
                       priceRange[0] === 500 && priceRange[1] === 1000
-                        ? "bg-primary-600 text-white"
-                        : "bg-white text-gray-700 border border-gray-300"
+                        ? "bg-ink text-white"
+                        : "bg-white text-ink/70 border border-line hover:border-ink"
                     }`}
                   >
                     {t("500to1000")}
@@ -144,8 +146,8 @@ export default function Shop() {
                     onClick={() => handlePriceRangeChange(1000, 10000)}
                     className={`px-3 py-1 text-sm rounded-full ${
                       priceRange[0] === 1000 && priceRange[1] === 10000
-                        ? "bg-primary-600 text-white"
-                        : "bg-white text-gray-700 border border-gray-300"
+                        ? "bg-ink text-white"
+                        : "bg-white text-ink/70 border border-line hover:border-ink"
                     }`}
                   >
                     {t("over1000")}
@@ -158,51 +160,52 @@ export default function Shop() {
 
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t border-b border-ink"></div>
           </div>
         ) : (
           <section className="artwork-grid">
             {filteredArtworks.length > 0 ? (
               <>
-                <p className="text-gray-600 mb-4">
+                <p className="text-menu text-ink/60 mb-4">
                   {filteredArtworks.length} {t("nrOfArtworks")}
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 items-start">
                   {filteredArtworks.map((artwork) => (
-                    <div
-                      key={artwork.id}
-                      className="artwork-card border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
-                    >
-                      <div className="relative h-64">
+                    <div key={artwork.id} className="artwork-card group">
+                      <Link href={`/artwork/${artwork.slug}`} className="block">
                         {artwork.images && artwork.images[0] ? (
-                          <Image
-                            src={artwork.images[0].url}
+                          // Natural proportions — the artwork is never cropped
+                          // to fit a fixed card height.
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={optimizedImageUrl(artwork.images[0].url)}
+                            srcSet={cloudinarySrcSet(artwork.images[0].url, [400, 600, 800, 1200])}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             alt={artwork.images[0].alt || artwork.title}
-                            fill
-                            style={{ objectFit: "cover" }}
+                            width={artwork.images[0].width}
+                            height={artwork.images[0].height}
+                            loading="lazy"
+                            decoding="async"
+                            className="w-full h-auto transition-opacity group-hover:opacity-80"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                            <span className="text-gray-400">
-                              {t("noImage")}
-                            </span>
+                          <div className="w-full aspect-[4/5] bg-primary-50 flex items-center justify-center">
+                            <span className="text-ink/40">{t("noImage")}</span>
                           </div>
                         )}
-                      </div>
-                      <div className="p-4">
-                        <h3 className="text-xl">
-                          {artwork.title}
-                        </h3>
-                        <p className="text-gray-600">
+                      </Link>
+                      <div className="pt-4">
+                        <h3 className="text-title mb-1">{artwork.title}</h3>
+                        <p className="text-ink/60">
                           {artwork.medium}, {artwork.year}
                         </p>
-                        <p className="text-lg font-bold mt-2">
-                          ${artwork.price}
+                        <p className="mt-2">
+                          {formatPrice(artwork.price, locale)}
                         </p>
                         <div className="mt-4 flex flex-col sm:flex-row gap-2 w-full">
                           <Link
                             href={`/artwork/${artwork.slug}`}
-                            className="text-center bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50 transition w-50 flex justify-center items-center"
+                            className="text-center border border-ink text-ink px-4 py-2 hover:bg-ink hover:text-white transition-colors flex justify-center items-center"
                           >
                             {t("seeMore")}
                           </Link>
@@ -218,13 +221,13 @@ export default function Shop() {
               </>
             ) : (
               <div className="text-center py-12">
-                <p className="text-xl text-gray-600">{t("noArtworks")}</p>
+                <p className="text-ink/60">{t("noArtworks")}</p>
                 <button
                   onClick={() => {
                     setSortOption("newest");
                     setPriceRange([0, 10000]);
                   }}
-                  className="mt-4 bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 transition"
+                  className="mt-4 border border-ink text-ink px-4 py-2 hover:bg-ink hover:text-white transition-colors"
                 >
                   {t("removeFilters")}
                 </button>
@@ -233,12 +236,12 @@ export default function Shop() {
           </section>
         )}
 
-        <section className="commission-cta mt-16 bg-gray-50 p-8 rounded-lg border border-gray-200 text-center">
-          <h2 className="text-2xl mb-4">{t("ctaTitle")}</h2>
-          <p className="text-gray-700 mb-6 max-w-2xl mx-auto">{t("ctaText")}</p>
+        <section className="commission-cta mt-16 p-8 border-t border-line text-center">
+          <h2>{t("ctaTitle")}</h2>
+          <p className="mb-6 max-w-2xl mx-auto">{t("ctaText")}</p>
           <Link
             href="/contact"
-            className="bg-gray-800 text-white px-6 py-3 rounded-md hover:bg-gray-900 transition"
+            className="inline-block bg-ink text-white px-6 py-3 hover:opacity-80 transition-opacity"
           >
             {t("ctaButton")}
           </Link>

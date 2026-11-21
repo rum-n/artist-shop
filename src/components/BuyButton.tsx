@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 // Initialize Stripe
 const stripePromise = loadStripe(
@@ -17,6 +17,7 @@ export default function BuyButton({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations("BuyButton");
+  const locale = useLocale();
 
   const handlePurchase = async () => {
     setIsLoading(true);
@@ -26,7 +27,7 @@ export default function BuyButton({
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ artworkId }),
+        body: JSON.stringify({ artworkId, locale }),
       });
 
       const { sessionId } = await response.json();
@@ -54,11 +55,11 @@ export default function BuyButton({
     <button
       onClick={handlePurchase}
       disabled={!inStock || isLoading}
-      className={`w-full py-3 px-6 rounded-md cursor-pointer ${
+      className={`w-full py-3 px-6 cursor-pointer ${
         !inStock
-          ? "bg-gray-400 cursor-not-allowed"
-          : "bg-primary-600 hover:bg-primary-700"
-      } text-white font-medium`}
+          ? "bg-primary-300 cursor-not-allowed"
+          : "bg-ink hover:opacity-80 transition-opacity"
+      } text-white`}
     >
       {isLoading ? t("processing") : inStock ? t("text") : t("soldOut")}
     </button>

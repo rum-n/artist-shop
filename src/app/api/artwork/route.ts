@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { areImagesValid, isValidImageUrl } from "@/lib/imageUrl";
+import { areImagesValid, normalizeImages } from "@/lib/imageUrl";
 import { Artwork } from "@/types/Artwork";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 type Dimensions = {
   width: string | number;
@@ -14,10 +13,9 @@ type Dimensions = {
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const denied = await requireAdmin();
+    if (denied) {
+      return denied;
     }
 
     // Images arrive as Cloudinary URLs already uploaded via /api/upload, so the
@@ -64,12 +62,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const imageUrls = (body.images as { url: string; alt?: string }[]).map(
-      (image) => ({
-        url: image.url,
-        alt: image.alt || title, // Default alt text
-      })
-    );
+    const imageUrls = normalizeImages(body.images, title);
 
     if (imageUrls.length === 0) {
       return NextResponse.json(
@@ -155,24 +148,7 @@ export async function GET(request: NextRequest) {
         // Only surface images backed by a real uploaded URL. Anything else
         // (legacy junk paths, missing urls) is dropped so the UI never tries
         // to render a broken image.
-        images:
-          artwork.images
-            ?.map((image) => {
-              if (
-                typeof image === "object" &&
-                image !== null &&
-                isValidImageUrl((image as { url?: unknown }).url)
-              ) {
-                return {
-                  url: (image as { url: string }).url,
-                  alt: (image as { alt?: string }).alt || artwork.title,
-                };
-              }
-              return null;
-            })
-            .filter((image): image is { url: string; alt: string } =>
-              image !== null
-            ) || [],
+        images: normalizeImages(artwork.images, artwork.title),
       };
     });
 

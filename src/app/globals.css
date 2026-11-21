@@ -2,53 +2,93 @@
 @plugin "@tailwindcss/typography";
 
 /*
- * Brand palette — warm, earthy tones.
- *   cream  #EBE5D5  page background
- *   sage   #AAA786  muted accent / borders
- *   bronze #BC9362  logo & highlights
- *   slate  #3F4947  primary text / dark accents
- * `primary-*` mirrors the same bronze so existing button/link utilities
- * pick up the new palette without touching every className.
+ * Monochrome palette — white page, black text. The paintings supply all the
+ * colour, so the surrounding chrome stays neutral.
+ *   ink   #000000  text, solid buttons
+ *   line  #e5e5e5  hairline rules and borders
+ * `primary-*` is a neutral ramp so existing button/link utilities land on the
+ * monochrome scheme without having to touch every className.
  */
 @theme {
-  --color-cream: #ebe5d5;
-  --color-sage: #aaa786;
-  --color-bronze: #bc9362;
-  --color-slate: #3f4947;
+  --color-ink: #000000;
+  --color-line: #e5e5e5;
 
-  --color-primary-50: #f6f2ea;
-  --color-primary-100: #ece4d5;
-  --color-primary-200: #ddccb2;
-  --color-primary-300: #cdb28c;
-  --color-primary-400: #c2a277;
-  --color-primary-500: #bc9362;
-  --color-primary-600: #a67d4e;
-  --color-primary-700: #866340;
-  --color-primary-800: #6b4f36;
-  --color-primary-900: #3f4947;
+  --color-primary-50: #f7f7f7;
+  --color-primary-100: #ededed;
+  --color-primary-200: #dcdcdc;
+  --color-primary-300: #bdbdbd;
+  --color-primary-400: #8a8a8a;
+  --color-primary-500: #5c5c5c;
+  --color-primary-600: #1a1a1a;
+  --color-primary-700: #000000;
+  --color-primary-800: #000000;
+  --color-primary-900: #000000;
+
+  /*
+   * Cormorant Garamond for display, Manrope for everything else. Manrope
+   * stands in for the DM Sans in the brief because DM Sans ships no Cyrillic
+   * at all, which would drop every Bulgarian string onto a fallback font.
+   */
+  --font-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-manrope), Arial, Helvetica, sans-serif;
+
+  /* Sizes from the brief, clamped so the display sizes still fit a phone. */
+  --text-display: clamp(2.5rem, 7vw, 4.75rem); /* 40 → 76px */
+  --text-subhead: clamp(1.75rem, 4vw, 2.75rem); /* 28 → 44px */
+  --text-title: clamp(1.5rem, 3vw, 2.25rem); /* 24 → 36px */
+  --text-body: clamp(1rem, 0.4vw + 0.9rem, 1.125rem); /* 16 → 18px */
+  --text-menu: 0.9375rem; /* 15px */
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: var(--color-cream);
-  color: var(--color-slate);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  background-color: #ffffff;
+  color: var(--color-ink);
 }
 
 h1,
 h2,
-h3 {
-  font-family: var(--font-roboto), sans-serif;
-  @apply font-thin;
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.12;
+  color: var(--color-ink);
 }
 
 h1 {
-  @apply text-5xl mb-4;
+  font-size: var(--text-display);
+  @apply mb-6;
 }
 
 h2 {
-  @apply text-3xl mb-4;
+  font-size: var(--text-subhead);
+  @apply mb-4;
 }
 
 h3 {
-  @apply text-2xl mb-4;
+  font-size: var(--text-title);
+  @apply mb-3;
+}
+
+/*
+ * Long-form markdown (about page, artwork descriptions) renders through the
+ * typography plugin, which defaults to greys — pull it back to black.
+ */
+.prose {
+  --tw-prose-body: var(--color-ink);
+  --tw-prose-headings: var(--color-ink);
+  --tw-prose-bold: var(--color-ink);
+  --tw-prose-links: var(--color-ink);
+  --tw-prose-quotes: var(--color-ink);
+  --tw-prose-bullets: var(--color-ink);
+  --tw-prose-counters: var(--color-ink);
+  --tw-prose-hr: var(--color-line);
+}
+
+.prose :where(h1, h2, h3, h4):not(:where([class~="not-prose"] *)) {
+  font-family: var(--font-display);
+  font-weight: 500;
 }

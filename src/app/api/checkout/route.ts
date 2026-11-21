@@ -2,9 +2,35 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import stripe from '@/lib/stripe';
 
+/**
+ * `description` is stored as a JSON string of { en, bg }. Handing that to
+ * Stripe put raw JSON on the payment page, so it is parsed and reduced to a
+ * single line of plain text here.
+ */
+function checkoutDescription(
+  artwork: { description: string; medium: string; year: number },
+  locale: string
+) {
+  let text = '';
+  try {
+    const parsed = JSON.parse(artwork.description);
+    text = parsed?.[locale] || parsed?.en || '';
+  } catch {
+    text = artwork.description || '';
+  }
+
+  const fallback = `${artwork.medium}, ${artwork.year}`;
+  const description = (text || fallback).replace(/\s+/g, ' ').trim();
+
+  // Stripe rejects descriptions over 1000 characters.
+  return description.length > 500
+    ? `${description.slice(0, 497)}...`
+    : description;
+}
+
 export async function POST(request: Request) {
   try {
-    const { artworkId } = await request.json();
+    const { artworkId, locale } = await request.json();
 
     // Get the host from the request headers for URL construction
     const { headers } = request;
@@ -34,7 +60,10 @@ export async function POST(request: Request) {
             currency: 'eur',
             product_data: {
               name: artwork.title,
-              description: artwork.description || '',
+              description: checkoutDescription(
+                artwork,
+                typeof locale === 'string' ? locale : 'en'
+              ),
               // Omitting images to avoid URL issues
             },
             unit_amount: Math.round(artwork.price * 100),

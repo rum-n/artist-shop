@@ -32,9 +32,11 @@ export default function AdminSeries() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  if (status === "unauthenticated") {
-    router.push("/admin/login");
-  }
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
 
   const fetchSeries = async () => {
     setIsLoading(true);

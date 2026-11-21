@@ -7,7 +7,8 @@
     "firstSectionTitle": "Featured artworks",
     "featuredArtworkCard": {
       "button": "View details"
-    }
+    },
+    "viewAll": "View all artworks"
   },
   "GalleryPage": {
     "title": "Art Gallery",
@@ -27,9 +28,9 @@
     "price-desc": "Price: High to Low",
     "price": "Price",
     "all": "All",
-    "under500": "Under $500",
-    "500to1000": "$500 - $1000",
-    "over1000": "Over $1000",
+    "under500": "Under €500",
+    "500to1000": "€500 – €1000",
+    "over1000": "Over €1000",
     "nrOfArtworks": "available artworks",
     "noImage": "No image",
     "seeMore": "Details",
@@ -42,12 +43,26 @@
   "ArtworkPage": {
     "buttons": {
       "back": "Back to gallery"
-    }
+    },
+    "available": "Available",
+    "sold": "Sold",
+    "description": "Description",
+    "details": "Details",
+    "dimensions": "Dimensions",
+    "medium": "Medium",
+    "year": "Year",
+    "checkoutNote": "Secure checkout • Worldwide shipping",
+    "questionsTitle": "Have questions?",
+    "questionsText": "Write to me about this artwork, a commission, or shipping.",
+    "contactButton": "Contact me",
+    "notFound": "Artwork not found",
+    "loadFailed": "Failed to load the artwork details."
   },
   "Navigation": {
     "about": "About me",
     "gallery": "Gallery",
-    "shop": "Shop"
+    "shop": "Shop",
+    "contact": "Contact"
   },
   "AboutPage": {},
   "BuyButton": {
@@ -59,5 +74,26 @@
     "newsletterTitle": "Join my newsletter",
     "newsletterText": "Stories from the studio, new work, and exhibitions — straight to your inbox.",
     "rights": "All rights reserved."
+  },
+  "ContactPage": {
+    "title": "Contact",
+    "intro": "For questions about a particular work, a commission, shipping or an exhibition, the quickest way to reach me is by email.",
+    "emailLabel": "Email",
+    "instagramLabel": "Instagram",
+    "newsletterLabel": "Newsletter",
+    "newsletterLink": "Subscribe on Substack",
+    "commissionTitle": "Commissions",
+    "commissionText": "If you would like a piece made for a particular space, write to me with the dimensions, the colours you have in mind, and a photo of the room if you have one.",
+    "commissionSubject": "Commission enquiry",
+    "commissionButton": "Enquire about a commission",
+    "backToGallery": "← Back to gallery"
+  },
+  "CheckoutPage": {
+    "title": "Thank you for your purchase",
+    "processed": "Your payment went through and the artwork is reserved for you.",
+    "orderNumber": "Order reference",
+    "total": "Total",
+    "emailed": "A receipt has been sent to your email address.",
+    "continue": "Back to the gallery"
   }
 }

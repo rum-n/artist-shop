@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 function parseDescription(description: string | null) {
   if (!description) return { en: "", bg: "" };
@@ -35,9 +34,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const denied = await requireAdmin();
+    if (denied) {
+      return denied;
     }
 
     const body = await request.json();

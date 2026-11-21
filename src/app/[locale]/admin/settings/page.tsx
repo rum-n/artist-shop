@@ -18,9 +18,11 @@ export default function SiteSettings() {
   const { status } = useSession();
   const router = useRouter();
 
-  if (status === 'unauthenticated') {
-    router.push('/login');
-  }
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [status, router]);
 
   const [heroImage, setHeroImage] = useState<File | null>(null);
   const [currentHeroImage, setCurrentHeroImage] = useState<string | null>(null);

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { requireAdmin } from '@/lib/requireAdmin';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -13,14 +12,15 @@ cloudinary.config({
 interface CloudinaryUploadResult {
   secure_url: string;
   public_id: string;
+  width: number;
+  height: number;
 }
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    const denied = await requireAdmin();
+    if (denied) {
+      return denied;
     }
 
     const formData = await request.formData();
@@ -45,9 +45,15 @@ export async function POST(request: Request) {
       });
     });
 
+    const uploaded = result as CloudinaryUploadResult;
+
+    // width/height travel with the URL so the public pages can reserve the
+    // right aspect ratio before the image itself has loaded.
     return NextResponse.json({
-      url: (result as CloudinaryUploadResult).secure_url,
-      public_id: (result as CloudinaryUploadResult).public_id
+      url: uploaded.secure_url,
+      public_id: uploaded.public_id,
+      width: uploaded.width,
+      height: uploaded.height,
     });
   } catch (error) {
     console.error('Upload error:', error);

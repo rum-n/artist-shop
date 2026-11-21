@@ -1,51 +1,22 @@
-"use client";
-
 import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import Navbar from "@/components/Navbar";
-import { Artwork } from "@/types/Artwork";
 import ReactMarkdown from "react-markdown";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
+import Navbar from "@/components/Navbar";
+import { getHomeData } from "@/lib/homeData";
+import { formatPrice } from "@/lib/price";
+import { cloudinarySrcSet, optimizedImageUrl } from "@/lib/cloudinary";
 
-export default function Home() {
-  const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
-  const [heroImage, setHeroImage] = useState<string | null>(null);
-  const [homepageContent, setHomepageContent] = useState<string | null>(null);
-  const t = useTranslations("HomePage");
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "HomePage" });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const artworksResponse = await fetch(
-          "/api/artwork?featured=true&inStock=true"
-        );
-        const artworksData = await artworksResponse.json();
-
-        if (artworksData.artworks) {
-          setFeaturedArtworks(artworksData.artworks.slice(0, 3));
-        }
-
-        const heroResponse = await fetch("/api/settings/hero-image");
-        const heroData = await heroResponse.json();
-
-        if (heroData.imageUrl) {
-          setHeroImage(heroData.imageUrl);
-        } else {
-          setHeroImage(null);
-        }
-
-        if (heroData.homepageContent) {
-          setHomepageContent(heroData.homepageContent.value.content);
-        } else {
-          setHomepageContent(null);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, []);
+  // Fetched on the server, so the hero's URL is in the HTML the browser first
+  // receives and its download starts immediately.
+  const { heroImage, homepageContent, featuredArtworks } = await getHomeData();
 
   return (
     <>
@@ -55,36 +26,52 @@ export default function Home() {
         <section className="relative h-screen">
           {heroImage ? (
             <div className="absolute inset-0">
-              <Image
-                src={heroImage}
-                alt="Hero Image"
-                fill
-                priority
-                style={{ objectFit: "cover" }}
+              {/*
+                A Cloudinary srcset rather than next/image: the transform is
+                done once at their CDN edge, so nothing has to pull the
+                multi-megabyte original through our own optimizer first.
+              */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={optimizedImageUrl(heroImage, 1920)}
+                srcSet={cloudinarySrcSet(heroImage)}
+                sizes="100vw"
+                alt=""
+                fetchPriority="high"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover"
               />
               {/* Overlay to ensure text is readable */}
               <div className="absolute inset-0 bg-black opacity-40"></div>
             </div>
           ) : (
-            <div className="absolute inset-0 bg-cream"></div>
+            <div className="absolute inset-0 bg-white"></div>
           )}
 
           <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center items-center text-center">
             {homepageContent && (
-              <div className={`${heroImage ? "text-white" : "text-gray-900"}`}>
+              <div className={heroImage ? "text-white" : "text-ink"}>
                 <ReactMarkdown>{homepageContent}</ReactMarkdown>
               </div>
             )}
             <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
               <Link
                 href="/gallery"
-                className="bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 transition"
+                className={
+                  heroImage
+                    ? "bg-white text-ink px-6 py-3 hover:opacity-80 transition-opacity"
+                    : "bg-ink text-white px-6 py-3 hover:opacity-80 transition-opacity"
+                }
               >
                 {t("buttons.gallery")}
               </Link>
               <Link
                 href="/shop"
-                className="bg-gray-800 text-white px-6 py-3 rounded-md hover:bg-gray-900 transition"
+                className={
+                  heroImage
+                    ? "border border-white text-white px-6 py-3 hover:bg-white hover:text-ink transition-colors"
+                    : "border border-ink text-ink px-6 py-3 hover:bg-ink hover:text-white transition-colors"
+                }
               >
                 {t("buttons.shop")}
               </Link>
@@ -94,46 +81,45 @@ export default function Home() {
 
         {/* Featured Works Section */}
         <section className="featured-works py-16 container mx-auto px-4">
-          <h2 className="text-3xl mb-8 text-center">
-            {t("firstSectionTitle")}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredArtworks &&
-              featuredArtworks.length > 0 &&
-              featuredArtworks.map((artwork: Artwork) => (
-                <div
-                  key={artwork.id}
-                  className="artwork-card border rounded-lg overflow-hidden"
-                >
-                  <div className="relative h-64">
-                    {artwork.images && artwork.images[0] && (
-                      <Image
-                        src={artwork.images[0].url}
-                        alt={artwork.images[0].alt || "Artwork"}
-                        fill
-                        style={{ objectFit: "cover" }}
-                      />
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-xl">{artwork.title}</h3>
-                    <p className="text-gray-600">
-                      {artwork.medium}, {artwork.year}
-                    </p>
-                    <p className="text-lg font-bold mt-2">${artwork.price}</p>
-                    <Link
-                      href={`/artwork/${artwork.slug}`}
-                      className="mt-4 inline-block bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 transition"
-                    >
-                      {t("featuredArtworkCard.button")}
-                    </Link>
-                  </div>
+          <h2 className="text-center">{t("firstSectionTitle")}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 items-start">
+            {featuredArtworks.map((artwork) => (
+              <Link
+                key={artwork.id}
+                href={`/artwork/${artwork.slug}`}
+                className="artwork-card group block"
+              >
+                {artwork.images[0] && (
+                  // The image keeps its own proportions rather than being
+                  // cropped to a fixed box.
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={optimizedImageUrl(artwork.images[0].url)}
+                    srcSet={cloudinarySrcSet(artwork.images[0].url, [400, 600, 800])}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    alt={artwork.images[0].alt || artwork.title}
+                    width={artwork.images[0].width}
+                    height={artwork.images[0].height}
+                    loading="lazy"
+                    className="w-full h-auto transition-opacity group-hover:opacity-80"
+                  />
+                )}
+                <div className="pt-4">
+                  <h3 className="text-title mb-1">{artwork.title}</h3>
+                  <p className="text-ink/60">
+                    {artwork.medium}, {artwork.year}
+                  </p>
+                  <p className="mt-2">{formatPrice(artwork.price, locale)}</p>
                 </div>
-              ))}
+              </Link>
+            ))}
           </div>
-          <div className="text-center mt-8">
-            <Link href="/gallery" className="text-primary-600 hover:underline">
-              View All Artworks
+          <div className="text-center mt-12">
+            <Link
+              href="/gallery"
+              className="inline-block border border-ink text-ink px-6 py-3 hover:bg-ink hover:text-white transition-colors"
+            >
+              {t("viewAll")}
             </Link>
           </div>
         </section>

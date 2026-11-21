@@ -15,21 +15,21 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-cream text-slate border-t border-sage">
+    <footer className="bg-white text-ink border-t border-line">
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col items-center text-center gap-4 max-w-2xl mx-auto">
-          <h2 className="text-2xl">{t("newsletterTitle")}</h2>
-          <p className="text-slate/70">{t("newsletterText")}</p>
+          <h2>{t("newsletterTitle")}</h2>
+          <p className="text-ink/60">{t("newsletterText")}</p>
           <iframe
             src={SUBSTACK_EMBED_URL}
             title={t("newsletterTitle")}
             width={480}
             height={320}
-            className="mt-2 w-full max-w-[480px] rounded-md border border-gray-200 bg-white"
+            className="mt-2 w-full max-w-[480px] border border-line bg-white"
           ></iframe>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-sage text-center text-sm text-slate/70">
+        <div className="mt-10 pt-6 border-t border-line text-center text-menu text-ink/60">
           © {new Date().getFullYear()} Violetta Boyadzhieva. {t("rights")}
         </div>
       </div>

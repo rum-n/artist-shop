@@ -7,16 +7,18 @@ import AdminNavbar from "@/components/AdminNavbar";
 import Image from "next/image";
 import ImageUploader from "@/components/ImageUploader";
 import { toast } from "react-hot-toast";
-import { ArtworkFormData, Series } from "@/types/Artwork";
+import { ArtworkFormData, ArtworkImage, Series } from "@/types/Artwork";
 import { getErrorMessage } from "@/lib/apiError";
 
 export default function NewArtwork() {
   const { status } = useSession();
   const router = useRouter();
 
-  if (status === "unauthenticated") {
-    router.push("/admin/login");
-  }
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
 
   const [formData, setFormData] = useState<ArtworkFormData>({
     title: "",
@@ -85,7 +87,7 @@ export default function NewArtwork() {
     }
   };
 
-  const handleImageUpload = (url: string) => {
+  const handleImageUpload = (image: Omit<ArtworkImage, "alt">) => {
     if (formData.images.length >= 3) {
       toast.error("Maximum of 3 images allowed per artwork");
       return;
@@ -93,7 +95,7 @@ export default function NewArtwork() {
 
     setFormData({
       ...formData,
-      images: [...formData.images, { url, alt: formData.title }],
+      images: [...formData.images, { ...image, alt: formData.title }],
     });
   };
 
@@ -236,7 +238,7 @@ export default function NewArtwork() {
 
             <div>
               <label htmlFor="price" className="block text-gray-700 mb-2">
-                Price ($) *
+                Price (€) *
               </label>
               <input
                 type="number"
