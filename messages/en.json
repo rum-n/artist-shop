@@ -8,7 +8,8 @@
     "featuredArtworkCard": {
       "button": "View details"
     },
-    "viewAll": "View all artworks"
+    "viewAll": "View all artworks",
+    "readMore": "Read more"
   },
   "GalleryPage": {
     "title": "Art Gallery",
@@ -73,7 +74,12 @@
   "Footer": {
     "newsletterTitle": "Join my newsletter",
     "newsletterText": "Stories from the studio, new work, and exhibitions — straight to your inbox.",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "your@email.com",
+    "subscribe": "Subscribe",
+    "substackLink": "Or read the archive on Substack",
+    "contact": "Contact"
   },
   "ContactPage": {
     "title": "Contact",

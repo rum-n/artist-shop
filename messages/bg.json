@@ -8,7 +8,8 @@
     "featuredArtworkCard": {
       "button": "Виж повече"
     },
-    "viewAll": "Вижте всички творби"
+    "viewAll": "Вижте всички творби",
+    "readMore": "Прочетете повече"
   },
   "GalleryPage": {
     "title": "Галерия",
@@ -72,7 +73,12 @@
   "Footer": {
     "newsletterTitle": "Абонирайте се за бюлетина ми",
     "newsletterText": "Истории от ателието, нови творби и изложби — директно във вашата поща.",
-    "rights": "Всички права запазени."
+    "rights": "Всички права запазени.",
+    "emailLabel": "Имейл адрес",
+    "emailPlaceholder": "your@email.com",
+    "subscribe": "Абонирай се",
+    "substackLink": "Или прочетете архива в Substack",
+    "contact": "Контакти"
   },
   "ContactPage": {
     "title": "Контакти",

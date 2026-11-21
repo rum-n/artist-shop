@@ -49,6 +49,16 @@
   --text-card: clamp(1.25rem, 2vw, 1.5rem); /* 20 → 24px */
   --text-body: clamp(1rem, 0.4vw + 0.9rem, 1.125rem); /* 16 → 18px */
   --text-menu: 0.9375rem; /* 15px */
+
+  /*
+   * Layout, measured off the reference site (kekanovic.com), whose Squarespace
+   * settings give maxPageWidth 1800px, pagePadding 4vw and 6.6vmax of section
+   * padding. The gutter keeps a floor so it doesn't collapse on a phone, and
+   * the section rhythm is clamped so it stays sane on very large screens.
+   */
+  --page-max: 1800px;
+  --page-gutter: max(1.25rem, 4vw);
+  --section-space: clamp(3.5rem, 6.6vmax, 8rem);
 }
 
 /*
@@ -75,8 +85,13 @@
   h3,
   h4 {
     font-family: var(--font-display);
+    /*
+     * The reference sets EB Garamond 400. Cormorant has markedly lighter stems
+     * than EB Garamond, so 500 here lands at a similar optical weight — and it
+     * is what the client's own brief asked for.
+     */
     font-weight: 500;
-    line-height: 1.12;
+    line-height: 1.4;
   }
 
   h1 {
@@ -112,5 +127,32 @@
   .prose :where(h1, h2, h3, h4):not(:where([class~="not-prose"] *)) {
     font-family: var(--font-display);
     font-weight: 500;
+  }
+}
+
+@layer components {
+  /*
+   * One page shell and one section rhythm, so every page lines up with every
+   * other. Replaces the ad-hoc `container mx-auto px-4 py-8` that left the
+   * content 16px from the viewport edge with 32px between sections.
+   */
+  .page-shell {
+    width: 100%;
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+  }
+
+  .section {
+    padding-block: var(--section-space);
+  }
+
+  .section-tight {
+    padding-block: calc(var(--section-space) / 2);
+  }
+
+  /* Holds running text to a comfortable measure rather than the full 1800px. */
+  .measure {
+    max-width: 68ch;
   }
 }

@@ -71,7 +71,7 @@ function ArtworkCard({ artwork }: { artwork: ArtworkWithImages }) {
               aria-hidden="true"
               loading="lazy"
               decoding="async"
-              className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+              className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
             />
           )}
         </div>
@@ -142,8 +142,8 @@ export default function Gallery() {
   return (
     <>
       <Navbar currentPath="/gallery" />
-      <main className="container mx-auto px-4 py-8">
-        <section className="gallery-header py-8">
+      <main className="page-shell section">
+        <section className="mb-16">
           <h1 className="text-center">{t("title")}</h1>
           <p className="text-ink/60 mb-8 text-center">
             {t("description")}

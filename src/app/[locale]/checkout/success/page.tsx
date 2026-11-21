@@ -54,7 +54,7 @@ function SuccessContent() {
   }, [sessionId]);
 
   return (
-    <div className="container mx-auto px-4 py-16 text-center">
+    <div className="page-shell section text-center">
       <h1 className="text-subhead">{t('title')}</h1>
       <p className="mb-8">{t('processed')}</p>
 
@@ -100,7 +100,7 @@ export default function CheckoutSuccess() {
   return (
     <Suspense
       fallback={
-        <div className="container mx-auto px-4 py-16 text-center">
+        <div className="page-shell section text-center">
           <Spinner />
         </div>
       }

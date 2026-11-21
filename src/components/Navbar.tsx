@@ -29,9 +29,9 @@ export default function Navbar({ currentPath }: NavbarProps) {
   };
 
   return (
-    <nav className="bg-white border-b border-line">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-20">
+    <nav className="bg-white">
+      <div className="page-shell">
+        <div className="flex justify-between items-center py-[max(1rem,1.2vw)]">
           {/* Artist Name / Logo */}
           <div className="flex-shrink-0">
             <Link

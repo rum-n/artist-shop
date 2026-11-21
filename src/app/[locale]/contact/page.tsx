@@ -21,8 +21,8 @@ export default function Contact() {
     <>
       <Navbar currentPath="/contact" />
 
-      <main className="container mx-auto px-4 py-8">
-        <section className="max-w-2xl mx-auto py-8">
+      <main className="page-shell section">
+        <section className="measure">
           <h1>{t("title")}</h1>
           <p className="mb-12">{t("intro")}</p>
 

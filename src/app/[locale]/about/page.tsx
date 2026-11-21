@@ -30,8 +30,8 @@ export default function About() {
     <>
       <Navbar currentPath="/about" />
 
-      <main className="container mx-auto px-4 py-8">
-        <section className="about-content max-w-4xl mx-auto py-8">
+      <main className="page-shell section">
+        <section className="about-content max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <div className="md:col-span-1">
               <div className="relative h-80 md:h-full overflow-hidden">

@@ -49,7 +49,7 @@ export default function ArtworkDetail() {
     return (
       <>
         <Navbar currentPath={`/artwork/${slug}`} />
-        <div className="container mx-auto px-4 py-16 flex justify-center">
+        <div className="page-shell section flex justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t border-b border-ink"></div>
         </div>
       </>
@@ -60,7 +60,7 @@ export default function ArtworkDetail() {
     return (
       <>
         <Navbar currentPath={`/artwork/${slug}`} />
-        <div className="container mx-auto px-4 py-16 text-center">
+        <div className="page-shell section text-center">
           <h2>{t('notFound')}</h2>
           <p className="mb-8">{error}</p>
           <Link href="/gallery" className="underline underline-offset-4">
@@ -74,7 +74,7 @@ export default function ArtworkDetail() {
   return (
     <>
       <Navbar currentPath={`/artwork/${slug}`} />
-      <main className="container mx-auto px-4 py-8">
+      <main className="page-shell section">
         <div className="mb-8">
           <Link href="/gallery" className="inline-flex items-center text-menu text-ink/60 hover:text-ink transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">

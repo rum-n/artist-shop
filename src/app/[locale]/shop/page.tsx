@@ -79,7 +79,7 @@ export default function Shop() {
     <>
       <Navbar currentPath="/shop" />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="page-shell section">
         <section className="shop-filters mb-8">
           <div className="p-6 border border-line">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
