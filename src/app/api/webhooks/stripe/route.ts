@@ -27,6 +27,52 @@ async function findOrCreateCustomer(email: string, name: string | null) {
   });
 }
 
+/**
+ * Pulls the delivery details out of a completed session. Stripe moved shipping
+ * from `shipping_details` to `collected_information.shipping_details`, so both
+ * shapes are read; whichever the pinned API version returns is used.
+ */
+function extractDelivery(session: Stripe.Checkout.Session) {
+  type ShippingLike = {
+    name?: string | null;
+    phone?: string | null;
+    address?: Stripe.Address | null;
+  };
+
+  const loose = session as unknown as {
+    shipping_details?: ShippingLike | null;
+    collected_information?: { shipping_details?: ShippingLike | null } | null;
+  };
+
+  const shipping =
+    loose.collected_information?.shipping_details ??
+    loose.shipping_details ??
+    null;
+
+  const address = shipping?.address ?? session.customer_details?.address ?? null;
+
+  const courierOffice =
+    session.custom_fields?.find((field) => field.key === 'courier_office')?.text
+      ?.value || null;
+
+  return {
+    name: shipping?.name ?? session.customer_details?.name ?? null,
+    phone: shipping?.phone ?? session.customer_details?.phone ?? null,
+    email: session.customer_details?.email ?? null,
+    courierOffice,
+    address: address
+      ? {
+          line1: address.line1 ?? null,
+          line2: address.line2 ?? null,
+          city: address.city ?? null,
+          state: address.state ?? null,
+          postalCode: address.postal_code ?? null,
+          country: address.country ?? null,
+        }
+      : null,
+  };
+}
+
 export async function POST(request: Request) {
   const body = await request.text();
   const signature = (await headers()).get('stripe-signature');
@@ -82,6 +128,8 @@ export async function POST(request: Request) {
         return NextResponse.json({ received: true });
       }
 
+      const delivery = extractDelivery(session);
+
       // Guests always have an email on a completed session, but the order must
       // never be lost if one is somehow missing.
       const email = session.customer_details?.email;
@@ -90,8 +138,16 @@ export async function POST(request: Request) {
       }
       const customer = await findOrCreateCustomer(
         email || `guest-${session.id}@no-email.invalid`,
-        session.customer_details?.name ?? null
+        delivery.name
       );
+
+      // Fill in a name for a returning buyer who had none on file.
+      if (!customer.name && delivery.name) {
+        await db.user.update({
+          where: { id: customer.id },
+          data: { name: delivery.name },
+        });
+      }
 
       const total = (session.amount_total ?? 0) / 100;
 
@@ -111,6 +167,8 @@ export async function POST(request: Request) {
           },
           total,
           status: 'processing',
+          // Everything needed to actually post the painting.
+          shippingAddress: delivery,
           paymentIntent:
             typeof session.payment_intent === 'string'
               ? session.payment_intent

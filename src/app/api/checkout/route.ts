@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import stripe from '@/lib/stripe';
+import { SHIPPING_COUNTRIES } from '@/lib/shipping';
+import { getShopStatus } from '@/lib/shopStatus.server';
 
 /**
  * `description` is stored as a JSON string of { en, bg }. Handing that to
@@ -31,6 +33,16 @@ function checkoutDescription(
 export async function POST(request: Request) {
   try {
     const { artworkId, locale } = await request.json();
+
+    // Enforced server-side: the buy buttons are hidden when the shop is
+    // closed, but a cached page or a direct request must not get through.
+    const shopStatus = await getShopStatus();
+    if (shopStatus.closed) {
+      return NextResponse.json(
+        { message: 'The shop is currently closed' },
+        { status: 403 }
+      );
+    }
 
     // Get the host from the request headers for URL construction
     const { headers } = request;
@@ -72,6 +84,30 @@ export async function POST(request: Request) {
         },
       ],
       mode: 'payment',
+
+      /*
+       * Without these, Stripe Checkout asks only for an email and a card — which
+       * is why there was no step for a name, address or phone. Shipping an
+       * original painting needs all of them.
+       */
+      billing_address_collection: 'required',
+      shipping_address_collection: {
+        allowed_countries: SHIPPING_COUNTRIES,
+      },
+      phone_number_collection: {
+        enabled: true,
+      },
+      // Bulgarian buyers commonly take delivery at a courier's office rather
+      // than a street address, so there is somewhere to say which one.
+      custom_fields: [
+        {
+          key: 'courier_office',
+          label: { type: 'custom', custom: 'Courier office (optional)' },
+          type: 'text',
+          optional: true,
+        },
+      ],
+
       success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/artwork/${artwork.slug}`,
       metadata: {

@@ -3,16 +3,10 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import Navbar from "@/components/Navbar";
+import { SITE, SOCIAL_LINKS } from "@/lib/site";
 
-/*
- * TODO: replace these with the artist's real details before going live.
- * Everything on this page is driven by these three values.
- */
-const CONTACT = {
-  email: "hello@example.com",
-  instagram: "violetta.boyadzhieva",
-  substack: "https://violettaboya.substack.com",
-};
+const instagram = SOCIAL_LINKS.find((link) => link.label === "Instagram");
+
 
 export default function Contact() {
   const t = useTranslations("ContactPage");
@@ -31,10 +25,10 @@ export default function Contact() {
               <dt className="text-menu text-ink/60 mb-1">{t("emailLabel")}</dt>
               <dd>
                 <a
-                  href={`mailto:${CONTACT.email}`}
+                  href={`mailto:${SITE.email}`}
                   className="underline underline-offset-4 hover:opacity-60 transition-opacity"
                 >
-                  {CONTACT.email}
+                  {SITE.email}
                 </a>
               </dd>
             </div>
@@ -45,12 +39,12 @@ export default function Contact() {
               </dt>
               <dd>
                 <a
-                  href={`https://instagram.com/${CONTACT.instagram}`}
+                  href={instagram?.url ?? SITE.substack}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline underline-offset-4 hover:opacity-60 transition-opacity"
                 >
-                  @{CONTACT.instagram}
+                  {instagram?.url.replace(/^https?:\/\/(www\.)?instagram\.com\//, "@")}
                 </a>
               </dd>
             </div>
@@ -61,7 +55,7 @@ export default function Contact() {
               </dt>
               <dd>
                 <a
-                  href={CONTACT.substack}
+                  href={SITE.substack}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline underline-offset-4 hover:opacity-60 transition-opacity"
@@ -76,7 +70,7 @@ export default function Contact() {
             <h2>{t("commissionTitle")}</h2>
             <p className="mb-6">{t("commissionText")}</p>
             <a
-              href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(
+              href={`mailto:${SITE.email}?subject=${encodeURIComponent(
                 t("commissionSubject")
               )}`}
               className="inline-block bg-ink text-white px-6 py-3 hover:opacity-80 transition-opacity"

@@ -9,12 +9,15 @@ import { Artwork } from '@/types/Artwork';
 import BuyButton from '@/components/BuyButton';
 import ImageGallery from '@/components/ImageGallery';
 import { formatPrice } from '@/lib/price';
+import { useShopStatus } from '@/lib/useShopStatus';
+import ShopClosedNotice from '@/components/ShopClosedNotice';
 
 export default function ArtworkDetail() {
   const params = useParams();
   const slug = params.slug as string;
   const locale = useLocale();
   const t = useTranslations('ArtworkPage');
+  const { status: shopStatus, loaded: statusLoaded } = useShopStatus();
 
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -139,10 +142,16 @@ export default function ArtworkDetail() {
               </ul>
             </div>
 
-            {artwork.inStock && (
+            {artwork.inStock && statusLoaded && (
               <div className="mt-8">
-                <BuyButton artworkId={artwork.id} inStock={artwork.inStock} />
-                <p className="text-menu text-ink/60 mt-2">{t('checkoutNote')}</p>
+                {shopStatus.closed ? (
+                  <ShopClosedNotice status={shopStatus} />
+                ) : (
+                  <>
+                    <BuyButton artworkId={artwork.id} inStock={artwork.inStock} />
+                    <p className="text-menu text-ink/60 mt-2">{t('checkoutNote')}</p>
+                  </>
+                )}
               </div>
             )}
 

@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "../globals.css";
 import { Providers } from "../providers";
 import Footer from "@/components/Footer";
+import { getInstagramPosts } from "@/lib/instagram.server";
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
@@ -38,13 +39,16 @@ export default async function RootLayout({
     notFound();
   }
 
+  // Read here rather than in the footer so the strip is server-rendered.
+  const instagramPosts = await getInstagramPosts();
+
   return (
     <html lang={locale}>
       <body className={`${cormorant.variable} ${manrope.variable} antialiased`}>
         <NextIntlClientProvider>
           <Providers>
             {children}
-            <Footer />
+            <Footer instagramPosts={instagramPosts} />
           </Providers>
         </NextIntlClientProvider>
       </body>

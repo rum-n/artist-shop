@@ -31,7 +31,34 @@ interface Order {
     name: string | null;
     email: string;
   };
+  shippingAddress: {
+    name: string | null;
+    phone: string | null;
+    email: string | null;
+    courierOffice: string | null;
+    address: {
+      line1: string | null;
+      line2: string | null;
+      city: string | null;
+      state: string | null;
+      postalCode: string | null;
+      country: string | null;
+    } | null;
+  } | null;
   items: OrderItem[];
+}
+
+/** Collapses the address into the lines you would write on a parcel. */
+function addressLines(shipping: Order['shippingAddress']): string[] {
+  if (!shipping?.address) return [];
+  const a = shipping.address;
+  return [
+    a.line1,
+    a.line2,
+    [a.postalCode, a.city].filter(Boolean).join(' '),
+    a.state,
+    a.country,
+  ].filter((line): line is string => Boolean(line && line.trim()));
 }
 
 export default function OrderDetailsModal({ orderId, onClose }: OrderDetailsModalProps) {
@@ -88,16 +115,40 @@ export default function OrderDetailsModal({ orderId, onClose }: OrderDetailsModa
                   <div className="space-y-2">
                     <p><span className="font-medium">Order Number:</span> {order.orderNumber}</p>
                     <p><span className="font-medium">Date:</span> {new Date(order.createdAt).toLocaleString()}</p>
-                    <p><span className="font-medium">Total Amount:</span> ${order.total.toFixed(2)}</p>
+                    <p><span className="font-medium">Total Amount:</span> {formatPrice(order.total)}</p>
                   </div>
                 </div>
 
                 <div>
                   <h3 className="text-lg mb-3">Customer Information</h3>
                   <div className="space-y-2">
-                    <p><span className="font-medium">Name:</span> {order.customer.name || 'N/A'}</p>
+                    <p><span className="font-medium">Name:</span> {order.shippingAddress?.name || order.customer.name || 'N/A'}</p>
                     <p><span className="font-medium">Email:</span> {order.customer.email}</p>
+                    <p><span className="font-medium">Phone:</span> {order.shippingAddress?.phone || 'N/A'}</p>
                   </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg mb-3">Delivery</h3>
+                  {addressLines(order.shippingAddress).length > 0 ||
+                  order.shippingAddress?.courierOffice ? (
+                    <div className="space-y-1">
+                      {addressLines(order.shippingAddress).map((line) => (
+                        <p key={line}>{line}</p>
+                      ))}
+                      {order.shippingAddress?.courierOffice && (
+                        <p className="pt-2">
+                          <span className="font-medium">Courier office:</span>{' '}
+                          {order.shippingAddress.courierOffice}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">
+                      No delivery address recorded — this order predates address
+                      collection at checkout.
+                    </p>
+                  )}
                 </div>
               </div>
 

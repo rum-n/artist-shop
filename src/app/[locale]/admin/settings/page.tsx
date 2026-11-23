@@ -7,6 +7,14 @@ import AdminNavbar from '@/components/AdminNavbar';
 import dynamic from 'next/dynamic';
 
 import { getErrorMessage } from '@/lib/apiError';
+import { OPEN_SHOP, ShopStatus, parseShopStatus } from '@/lib/shopStatus';
+import {
+  InstagramPost,
+  MAX_INSTAGRAM_POSTS,
+  parseInstagramPosts,
+} from '@/lib/instagram';
+import ImageUploader from '@/components/ImageUploader';
+import Image from 'next/image';
 
 const ClientMDXEditor = dynamic(() => import('@/components/ClientMDXEditor'), {
   ssr: false,
@@ -32,6 +40,8 @@ export default function SiteSettings() {
   const [successMessage, setSuccessMessage] = useState('');
   const [editorLoaded, setEditorLoaded] = useState(false);
   const [homepageContent, setHomepageContent] = useState('');
+  const [shopStatus, setShopStatus] = useState<ShopStatus>(OPEN_SHOP);
+  const [instagramPosts, setInstagramPosts] = useState<InstagramPost[]>([]);
 
   /*
    * MDXEditor is uncontrolled: it reads `markdown` once, on mount, and ignores
@@ -41,11 +51,14 @@ export default function SiteSettings() {
    */
   useEffect(() => {
     const load = async () => {
-      const [heroResult, aboutResult, homepageResult] = await Promise.allSettled([
-        fetch('/api/settings/hero-image').then((r) => r.json()),
-        fetch('/api/settings/about-me').then((r) => r.json()),
-        fetch('/api/settings/homepage-content').then((r) => r.json()),
-      ]);
+      const [heroResult, aboutResult, homepageResult, shopResult, instagramResult] =
+        await Promise.allSettled([
+          fetch('/api/settings/hero-image').then((r) => r.json()),
+          fetch('/api/settings/about-me').then((r) => r.json()),
+          fetch('/api/settings/homepage-content').then((r) => r.json()),
+          fetch('/api/settings/shop-status').then((r) => r.json()),
+          fetch('/api/settings/instagram').then((r) => r.json()),
+        ]);
 
       if (heroResult.status === 'fulfilled') {
         setCurrentHeroImage(heroResult.value.imageUrl ?? null);
@@ -65,12 +78,94 @@ export default function SiteSettings() {
         console.error('Error fetching homepage content:', homepageResult.reason);
       }
 
+      if (shopResult.status === 'fulfilled') {
+        setShopStatus(parseShopStatus(shopResult.value.shopStatus));
+      } else {
+        console.error('Error fetching shop status:', shopResult.reason);
+      }
+
+      if (instagramResult.status === 'fulfilled') {
+        setInstagramPosts(parseInstagramPosts(instagramResult.value.posts));
+      } else {
+        console.error('Error fetching photo strip:', instagramResult.reason);
+      }
+
       // Only now is it safe to mount the editors.
       setEditorLoaded(true);
     };
 
     load();
   }, []);
+
+  const handleInstagramSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+    setSuccessMessage('');
+
+    try {
+      const response = await fetch('/api/settings/instagram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ posts: instagramPosts }),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          await getErrorMessage(response, 'Failed to update the photo strip')
+        );
+      }
+
+      // The server drops rows missing an image or a link, so reflect back
+      // exactly what was stored rather than what was on screen.
+      const data = await response.json();
+      setInstagramPosts(parseInstagramPosts(data.posts));
+      setSuccessMessage('Photo strip updated');
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to update the photo strip'
+      );
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleShopStatusSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+    setSuccessMessage('');
+
+    try {
+      const response = await fetch('/api/settings/shop-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(shopStatus),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          await getErrorMessage(response, 'Failed to update the shop status')
+        );
+      }
+
+      setSuccessMessage(
+        shopStatus.closed ? 'The shop is now closed' : 'The shop is now open'
+      );
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to update the shop status'
+      );
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleHeroImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -203,6 +298,144 @@ export default function SiteSettings() {
             {successMessage}
           </div>
         )}
+
+        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-8">
+          <h2 className="text-xl mb-4">Instagram photo strip</h2>
+          <p className="text-sm text-gray-600 mb-4">
+            Shown as a band just above the footer. Upload the photo here (do not
+            paste an Instagram image address — those expire) and give the post it
+            should link to. Rows without both are discarded on save.
+          </p>
+
+          <form onSubmit={handleInstagramSubmit}>
+            <div className="space-y-4 mb-4">
+              {instagramPosts.map((post, index) => (
+                <div key={index} className="flex items-start gap-4 border border-gray-200 p-3 rounded-md">
+                  <div className="relative w-24 h-24 flex-shrink-0 bg-gray-100">
+                    {post.image ? (
+                      <Image src={post.image} alt="" fill className="object-cover" />
+                    ) : (
+                      <ImageUploader
+                        onUploadComplete={(image) =>
+                          setInstagramPosts(
+                            instagramPosts.map((p, i) =>
+                              i === index ? { ...p, image: image.url } : p
+                            )
+                          )
+                        }
+                      />
+                    )}
+                  </div>
+
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Link to the post
+                    </label>
+                    <input
+                      type="url"
+                      value={post.url}
+                      placeholder="https://www.instagram.com/p/..."
+                      onChange={(e) =>
+                        setInstagramPosts(
+                          instagramPosts.map((p, i) =>
+                            i === index ? { ...p, url: e.target.value } : p
+                          )
+                        )
+                      }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setInstagramPosts(instagramPosts.filter((_, i) => i !== index))
+                    }
+                    className="text-gray-500 hover:text-red-600"
+                    aria-label="Remove photo"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {instagramPosts.length < MAX_INSTAGRAM_POSTS && (
+              <button
+                type="button"
+                onClick={() =>
+                  setInstagramPosts([...instagramPosts, { image: '', url: '' }])
+                }
+                className="mb-4 border border-gray-300 px-4 py-2 rounded hover:bg-gray-50"
+              >
+                Add a photo
+              </button>
+            )}
+
+            <div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 disabled:bg-gray-400"
+              >
+                {isSubmitting ? 'Saving...' : 'Save photo strip'}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-8">
+          <h2 className="text-xl mb-4">Shop status</h2>
+
+          <form onSubmit={handleShopStatusSubmit}>
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                id="shopClosed"
+                checked={shopStatus.closed}
+                onChange={(e) =>
+                  setShopStatus({ ...shopStatus, closed: e.target.checked })
+                }
+                className="h-4 w-4 border-gray-300 rounded"
+              />
+              <label htmlFor="shopClosed" className="ml-2 block text-gray-700">
+                Close the shop (nothing can be bought while this is on)
+              </label>
+            </div>
+
+            {(['en', 'bg'] as const).map((lang) => (
+              <div key={lang} className="mb-4">
+                <label
+                  htmlFor={`shopMessage-${lang}`}
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Message shown while closed ({lang.toUpperCase()})
+                </label>
+                <textarea
+                  id={`shopMessage-${lang}`}
+                  value={shopStatus.message[lang] || ''}
+                  onChange={(e) =>
+                    setShopStatus({
+                      ...shopStatus,
+                      message: { ...shopStatus.message, [lang]: e.target.value },
+                    })
+                  }
+                  rows={3}
+                  placeholder="e.g. The shop is closed until 15 January."
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                />
+              </div>
+            ))}
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 disabled:bg-gray-400"
+            >
+              {isSubmitting ? 'Saving...' : 'Save shop status'}
+            </button>
+          </form>
+        </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
           <h2 className="text-xl mb-4">Homepage Content</h2>

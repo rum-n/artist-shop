@@ -3,10 +3,15 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { SITE, SOCIAL_LINKS } from "@/lib/site";
+import { InstagramPost } from "@/lib/instagram";
+import { optimizedImageUrl } from "@/lib/cloudinary";
 
-const SUBSTACK_URL = "https://violettaboya.substack.com";
-
-export default function Footer() {
+export default function Footer({
+  instagramPosts = [],
+}: {
+  instagramPosts?: InstagramPost[];
+}) {
   const pathname = usePathname();
   const t = useTranslations("Footer");
 
@@ -17,6 +22,33 @@ export default function Footer() {
 
   return (
     <footer className="bg-white text-ink border-t border-line">
+      {/*
+        Strip of photos linking out to her posts, managed from admin settings.
+        Renders nothing until she adds some, so an empty list never leaves a gap.
+      */}
+      {instagramPosts.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-4">
+          {instagramPosts.map((post) => (
+            <a
+              key={post.url}
+              href={post.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block aspect-square overflow-hidden"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={optimizedImageUrl(post.image, 600)}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-80"
+              />
+            </a>
+          ))}
+        </div>
+      )}
+
       <div className="page-shell section-tight">
         <div className="measure mx-auto text-center">
           <h2>{t("newsletterTitle")}</h2>
@@ -24,12 +56,11 @@ export default function Footer() {
 
           {/*
             Replaces the Substack <iframe>, which rendered Substack's own
-            styling — fixed at 480x320 inside a border — in the middle of the
-            page. This posts to the same endpoint the embed uses, so the signup
-            still works while the markup is ours.
+            styling inside the page. This posts to the same endpoint the embed
+            uses, so the signup still works while the markup is ours.
           */}
           <form
-            action={`${SUBSTACK_URL}/api/v1/free`}
+            action={`${SITE.substack}/api/v1/free`}
             method="post"
             target="_blank"
             className="mt-8 flex flex-col sm:flex-row gap-3 justify-center"
@@ -49,24 +80,29 @@ export default function Footer() {
               {t("subscribe")}
             </button>
           </form>
-
-          <a
-            href={SUBSTACK_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block mt-4 text-menu text-ink/50 hover:text-ink transition-colors"
-          >
-            {t("substackLink")}
-          </a>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-line flex flex-col sm:flex-row justify-between items-center gap-4 text-menu text-ink/60">
+        <div className="mt-16 pt-8 border-t border-line flex flex-col sm:flex-row justify-between items-center gap-6 text-menu text-ink/60">
           <p>
             © {new Date().getFullYear()} Violetta Boyadzhieva. {t("rights")}
           </p>
-          <Link href="/contact" className="hover:text-ink transition-colors">
-            {t("contact")}
-          </Link>
+
+          <nav className="flex flex-wrap items-center justify-center gap-6">
+            {SOCIAL_LINKS.map((social) => (
+              <a
+                key={social.url}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-ink transition-colors"
+              >
+                {social.label}
+              </a>
+            ))}
+            <Link href="/contact" className="hover:text-ink transition-colors">
+              {t("contact")}
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>

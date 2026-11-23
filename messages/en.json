@@ -39,7 +39,9 @@
     "removeFilters": "Remove filters",
     "ctaTitle": "Looking for something special?",
     "ctaText": "If you don't find exactly what you're looking for, consider a custom order. Violeta creates unique artworks tailored to your taste and space.",
-    "ctaButton": "Request a custom order"
+    "ctaButton": "Request a custom order",
+    "closedTitle": "The shop is closed",
+    "closedDefault": "The shop is closed at the moment. Please check back soon."
   },
   "ArtworkPage": {
     "buttons": {
